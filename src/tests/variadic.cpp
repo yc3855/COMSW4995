@@ -84,7 +84,11 @@ constexpr boost::multi_array<double, ND> gradient(boost::multi_array<double, ND>
     for (int i = 0; i < inArray.num_elements(); i++)
     {
         index = getIndexArray(inArray, p);
-        std::cout << index[0] << " " << index[1] << " " << index[2] << " value = " << inArray(index) << "  check = " << *p << std::endl;
+        for (int j = 0; j < n; j++)
+        {
+            std::cout << index[j] << " ";
+        }
+        std::cout << " value = " << inArray(index) << "  check = " << *p << std::endl;
         ++p;
     }
     return my_array;
@@ -92,28 +96,30 @@ constexpr boost::multi_array<double, ND> gradient(boost::multi_array<double, ND>
 
 int main()
 {
-    // Create a 3D array that is 3 x 4 x 2
-    typedef boost::multi_array<double, 3>::index index;
-    boost::multi_array<double, 3> A(boost::extents[3][4][2]);
+    // Create a 4D array that is 3 x 4 x 2 x 1
+    typedef boost::multi_array<double, 4>::index index;
+    boost::multi_array<double, 4> A(boost::extents[3][4][2][2]);
 
     // Assign values to the elements
     int values = 0;
     for (index i = 0; i != 3; ++i)
         for (index j = 0; j != 4; ++j)
             for (index k = 0; k != 2; ++k)
-                A[i][j][k] = values++;
+                for (index l = 0; l != 2; ++l)
+                    A[i][j][k][l] = values++;
 
     // Verify values
     int verify = 0;
     for (index i = 0; i != 3; ++i)
         for (index j = 0; j != 4; ++j)
             for (index k = 0; k != 2; ++k)
-                assert(A[i][j][k] == verify++);
+                for (index l = 0; l != 2; ++l)
+                    assert(A[i][j][k][l] == verify++);
 
     boost::multi_array<double, 1> dt(boost::extents[3]);
     dt[0] = 1;
     dt[1] = 2;
     dt[2] = 3;
-    boost::multi_array<double, 3> my_array = gradient(A, dt, dt, dt);
+    boost::multi_array<double, 4> my_array = gradient(A, dt, dt, dt, dt);
     return 0;
 }

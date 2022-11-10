@@ -78,7 +78,10 @@ namespace np
     template <long unsigned int ND, typename... Args>
     inline constexpr boost::multi_array<double, ND> gradient(boost::multi_array<double, ND> inArray, Args... args)
     {
+
         using arrayIndex = boost::multi_array<double, ND>::index;
+        using ndArray = boost::multi_array<ndArrayValue, ND>;
+
         using ndIndexArray = boost::array<arrayIndex, ND>;
 
         constexpr std::size_t n = sizeof...(Args);
@@ -90,7 +93,11 @@ namespace np
         for (int i = 0; i < inArray.num_elements(); i++)
         {
             index = getIndexArray(inArray, p);
-            std::cout << index[0] << " " << index[1] << " " << index[2] << " value = " << inArray(index) << "  check = " << *p << std::endl;
+            for (int j = 0; j < n; j++)
+            {
+                std::cout << index[j] << " ";
+            }
+            std::cout << " value = " << inArray(index) << "  check = " << *p << std::endl;
             ++p;
         }
         return my_array;
