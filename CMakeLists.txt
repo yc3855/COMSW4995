@@ -7,13 +7,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set (source_dir "${PROJECT_SOURCE_DIR}/src")
-
+find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
 
 add_executable(Main "${source_dir}/main.cpp")
 target_include_directories(Main PRIVATE "${source_dir}")
 
 add_library(cxxopts STATIC "${source_dir}/ExternalLibraries/cxxopts.hpp")
 set_target_properties(cxxopts PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(Main PRIVATE cxxopts)
+target_link_libraries(Main cxxopts Boost::program_options)
+
+add_executable(VariadicTest "${source_dir}/tests/variadic.cpp")
+target_link_libraries(VariadicTest Boost::program_options)
 
 #configure_file(Config.h.in Config.h)

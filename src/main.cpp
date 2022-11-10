@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "ExternalLibraries/cxxopts.hpp"
+#include "CustomLibraries/np.hpp"
 
 // Command line arguments
 cxxopts::Options options("WaveSimC", "A wave propagation simulator written in C++ for seismic data processing.");
