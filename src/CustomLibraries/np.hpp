@@ -3,6 +3,8 @@
 
 #include "boost/multi_array.hpp"
 #include "boost/array.hpp"
+#include "boost/cstdlib.hpp"
+#include <type_traits>
 #include <cassert>
 #include <iostream>
 
@@ -75,33 +77,77 @@ namespace np
 
     // Takes the gradient of a n-dimensional multi_array
     // Todo: Actually implement the gradient calculation
-    template <long unsigned int ND, typename... Args>
-    inline constexpr boost::multi_array<double, ND> gradient(boost::multi_array<double, ND> inArray, Args... args)
+    // template <long unsigned int ND, typename... Args>
+    template <long unsigned int ND>
+    inline constexpr std::vector<boost::multi_array<double, ND>> gradient(boost::multi_array<double, ND> inArray, std::initializer_list<double> args)
     {
-
+        // static_assert(args.size() == ND, "Number of arguments must match the number of dimensions of the array");
         using arrayIndex = boost::multi_array<double, ND>::index;
         using ndArray = boost::multi_array<ndArrayValue, ND>;
 
         using ndIndexArray = boost::array<arrayIndex, ND>;
 
-        constexpr std::size_t n = sizeof...(Args);
-        std::tuple<Args...> store(args...);
+        // constexpr std::size_t n = sizeof...(Args);
+        std::size_t n = args.size();
+        // std::tuple<Args...> store(args...);
+        std::vector<double> arg_vector = args;
         boost::multi_array<double, ND> my_array;
+        std::vector<boost::multi_array<double, ND>> output_arrays;
+        for (std::size_t i = 0; i < n; i++)
+        {
+            boost::multi_array<double, ND> dfdh = inArray;
+            output_arrays.push_back(dfdh);
+        }
 
         ndArrayValue *p = inArray.data();
         ndIndexArray index;
         for (int i = 0; i < inArray.num_elements(); i++)
         {
             index = getIndexArray(inArray, p);
+            /*
+            std::cout << "Index: ";
             for (int j = 0; j < n; j++)
             {
                 std::cout << index[j] << " ";
             }
-            std::cout << " value = " << inArray(index) << "  check = " << *p << std::endl;
+            std::cout << "\n";
+            */
+            // Calculating the gradient now
+            // j is the axis/dimension
+            for (int j = 0; j < n; j++)
+            {
+                ndIndexArray index_high = index;
+                double dh_high;
+                if (index_high[j] < inArray.shape()[j] - 1)
+                {
+                    index_high[j] += 1;
+                    dh_high = arg_vector[j];
+                }
+                else
+                {
+                    dh_high = 0;
+                }
+                ndIndexArray index_low = index;
+                double dh_low;
+                if (index_low[j] > 0)
+                {
+                    index_low[j] -= 1;
+                    dh_low = arg_vector[j];
+                }
+                else
+                {
+                    dh_low = 0;
+                }
+
+                double dh = dh_high + dh_low;
+                double gradient = (inArray(index_high) - inArray(index_low)) / dh;
+                // std::cout << gradient << "\n";
+                output_arrays[j](index) = gradient;
+            }
+            // std::cout << " value = " << inArray(index) << "  check = " << *p << std::endl;
             ++p;
         }
-        return my_array;
+        return output_arrays;
     }
-
 }
 #endif
