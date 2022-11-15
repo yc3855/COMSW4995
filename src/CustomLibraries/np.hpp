@@ -149,5 +149,95 @@ namespace np
         }
         return output_arrays;
     }
+
+    inline boost::multi_array<double, 1> linspace(double start, double stop, long unsigned int num)
+    {
+        double step = (stop - start) / (num - 1);
+        boost::multi_array<double, 1> output(boost::extents[num]);
+        for (int i = 0; i < num; i++)
+        {
+            output[i] = start + i * step;
+        }
+        return output;
+    }
+
+    inline boost::multi_array<double, 1> zeros(long unsigned int num)
+    {
+        boost::multi_array<double, 1> output(boost::extents[num]);
+        for (int i = 0; i < num; i++)
+        {
+            output[i] = 0;
+        }
+        return output;
+    }
+
+    enum indexing
+    {
+        xy,
+        ij
+    };
+
+    // Implementation of meshgrid
+    // TODO: Implement sparsing=true
+    // If the indexing type is xx, then reverse the order of the first two elements of ci
+    // if the number of dimensions is 2 or 3
+    // In accordance with the numpy implementation
+    template <long unsigned int ND>
+    inline std::vector<boost::multi_array<double, ND>> meshgrid(const boost::multi_array<double, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
+    {
+        using arrayIndex = boost::multi_array<double, ND>::index;
+        using ndIndexArray = boost::array<arrayIndex, ND>;
+        std::vector<boost::multi_array<double, ND>> output_arrays;
+        boost::multi_array<double, 1> ci[ND];
+        // Copy elements of cinput to ci, do the proper inversions
+        for (int i = 0; i < ND; i++)
+        {
+            std::size_t source = i;
+            if (indexing_type == xy && (ND == 3 || ND == 2))
+            {
+                switch (i)
+                {
+                case 0:
+                    source = 1;
+                    break;
+                case 1:
+                    source = 0;
+                    break;
+                default:
+                    break;
+                }
+            }
+            ci[i] = boost::multi_array<double, 1>();
+            ci[i].resize(boost::extents[cinput[source].num_elements()]);
+            ci[i] = cinput[source];
+        }
+        // Deducing the extents of the N-Dimensional output
+        boost::detail::multi_array::extent_gen<ND> output_extents;
+        std::vector<size_t> shape_list;
+        for (std::size_t i = 0; i < ND; i++)
+        {
+            shape_list.push_back(ci[i].shape()[0]);
+        }
+        std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
+
+        // Creating the output arrays
+        for (std::size_t i = 0; i < ND; i++)
+        {
+            boost::multi_array<double, ND> output_array(output_extents);
+            ndArrayValue *p = output_array.data();
+            ndIndexArray index;
+            // Looping through the elements of the output array
+            for (int j = 0; j < output_array.num_elements(); j++)
+            {
+                index = getIndexArray(output_array, p);
+                boost::multi_array<double, 1>::index index_1d;
+                index_1d = index[i];
+                output_array(index) = ci[i][index_1d];
+                ++p;
+            }
+            output_arrays.push_back(output_array);
+        }
+        return output_arrays;
+    }
 }
 #endif

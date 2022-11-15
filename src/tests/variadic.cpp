@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-int main()
+void test_gradient()
 {
     // Create a 4D array that is 3 x 4 x 2 x 1
     typedef boost::multi_array<double, 4>::index index;
@@ -32,6 +32,54 @@ int main()
     dz = 1.0;
     dt = 1.0;
     std::vector<boost::multi_array<double, 4>> my_arrays = np::gradient(A, {dx, dy, dz, dt});
+
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
+    std::vector<boost::multi_array<double, 1>> gradf = np::gradient(x, {1.0});
+    for (int i = 0; i < 5; i++)
+    {
+        std::cout << gradf[0][i] << ",";
+    }
+    std::cout << "\n";
     // np::print(std::cout, my_arrays[0]);
-    return 0;
+}
+
+void test_meshgrid()
+{
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> y = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> z = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> t = np::linspace(0, 1, 5);
+    const boost::multi_array<double, 1> axis[4] = {x, y, z, t};
+    std::vector<boost::multi_array<double, 4>> my_arrays = np::meshgrid(axis, false, np::xy);
+    // np::print(std::cout, my_arrays[0]);
+    int nx = 3;
+    int ny = 2;
+    boost::multi_array<double, 1> x2 = np::linspace(0, 1, nx);
+    boost::multi_array<double, 1> y2 = np::linspace(0, 1, ny);
+    const boost::multi_array<double, 1> axis2[2] = {x2, y2};
+    std::vector<boost::multi_array<double, 2>> my_arrays2 = np::meshgrid(axis2, false, np::xy);
+    std::cout << "xv\n";
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << my_arrays2[0][i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "yv\n";
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << my_arrays2[1][i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+int main()
+{
+    test_gradient();
+    test_meshgrid();
 }
