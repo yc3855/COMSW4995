@@ -78,8 +78,64 @@ void test_meshgrid()
     }
 }
 
+void test_sqrt()
+{
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> y = np::sqrt(x);
+    std::cout << "sqrt\n";
+    for (int i = 0; i < 5; i++)
+    {
+        std::cout << y[i] << ",";
+    }
+    std::cout << "\n";
+    float a = 100.0;
+    float sqa = np::sqrt(a);
+    std::cout << "sqrt of " << a << " is " << sqa << "\n";
+}
+
+void test_equal()
+{
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> y = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> z = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> t = np::linspace(0, 1, 5);
+    const boost::multi_array<double, 1> axis[4] = {x, y, z, t};
+    std::vector<boost::multi_array<double, 4>> my_arrays = np::meshgrid(axis, false, np::xy);
+    boost::multi_array<double, 1> x2 = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> y2 = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> z2 = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> t2 = np::linspace(0, 1, 5);
+    const boost::multi_array<double, 1> axis2[4] = {x2, y2, z2, t2};
+    std::vector<boost::multi_array<double, 4>> my_arrays2 = np::meshgrid(axis2, false, np::xy);
+    std::cout << "equality test:\n";
+    std::cout << (bool)(my_arrays == my_arrays2) << "\n";
+}
+void test_basic_operations()
+{
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
+    boost::multi_array<double, 1> y = np::linspace(-1, -5, 5);
+    std::cout << "basic operations:\n";
+    std::cout << "addition:\n";
+    boost::multi_array<double, 1> my_arrays1 = x + y;
+    for (int i = 0; i < 5; i++)
+    {
+        std::cout << my_arrays1[i] << ",";
+    }
+    std::cout << "\n";
+    std::cout << "multiplication:\n";
+    boost::multi_array<double, 1> my_arrays2 = x * y;
+    for (int i = 0; i < 5; i++)
+    {
+        std::cout << my_arrays2[i] << ",";
+    }
+    std::cout << "\n";
+}
+
 int main()
 {
     test_gradient();
     test_meshgrid();
+    test_sqrt();
+    test_equal();
+    test_basic_operations();
 }

@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <cassert>
 #include <iostream>
+#include <functional>
 
 namespace np
 {
@@ -83,7 +84,6 @@ namespace np
     {
         // static_assert(args.size() == ND, "Number of arguments must match the number of dimensions of the array");
         using arrayIndex = boost::multi_array<double, ND>::index;
-        using ndArray = boost::multi_array<ndArrayValue, ND>;
 
         using ndIndexArray = boost::array<arrayIndex, ND>;
 
@@ -101,12 +101,12 @@ namespace np
 
         ndArrayValue *p = inArray.data();
         ndIndexArray index;
-        for (int i = 0; i < inArray.num_elements(); i++)
+        for (std::size_t i = 0; i < inArray.num_elements(); i++)
         {
             index = getIndexArray(inArray, p);
             /*
             std::cout << "Index: ";
-            for (int j = 0; j < n; j++)
+            for (std::size_t j = 0; j < n; j++)
             {
                 std::cout << index[j] << " ";
             }
@@ -114,11 +114,11 @@ namespace np
             */
             // Calculating the gradient now
             // j is the axis/dimension
-            for (int j = 0; j < n; j++)
+            for (std::size_t j = 0; j < n; j++)
             {
                 ndIndexArray index_high = index;
                 double dh_high;
-                if (index_high[j] < inArray.shape()[j] - 1)
+                if ((long unsigned int)index_high[j] < inArray.shape()[j] - 1)
                 {
                     index_high[j] += 1;
                     dh_high = arg_vector[j];
@@ -154,7 +154,7 @@ namespace np
     {
         double step = (stop - start) / (num - 1);
         boost::multi_array<double, 1> output(boost::extents[num]);
-        for (int i = 0; i < num; i++)
+        for (std::size_t i = 0; i < num; i++)
         {
             output[i] = start + i * step;
         }
@@ -164,7 +164,7 @@ namespace np
     inline boost::multi_array<double, 1> zeros(long unsigned int num)
     {
         boost::multi_array<double, 1> output(boost::extents[num]);
-        for (int i = 0; i < num; i++)
+        for (std::size_t i = 0; i < num; i++)
         {
             output[i] = 0;
         }
@@ -190,7 +190,7 @@ namespace np
         std::vector<boost::multi_array<double, ND>> output_arrays;
         boost::multi_array<double, 1> ci[ND];
         // Copy elements of cinput to ci, do the proper inversions
-        for (int i = 0; i < ND; i++)
+        for (std::size_t i = 0; i < ND; i++)
         {
             std::size_t source = i;
             if (indexing_type == xy && (ND == 3 || ND == 2))
@@ -227,7 +227,7 @@ namespace np
             ndArrayValue *p = output_array.data();
             ndIndexArray index;
             // Looping through the elements of the output array
-            for (int j = 0; j < output_array.num_elements(); j++)
+            for (std::size_t j = 0; j < output_array.num_elements(); j++)
             {
                 index = getIndexArray(output_array, p);
                 boost::multi_array<double, 1>::index index_1d;
@@ -239,5 +239,110 @@ namespace np
         }
         return output_arrays;
     }
+
+    template <class T, long unsigned int ND>
+    inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, T (*func)(T))
+    {
+
+        // Create output array copying extents
+        using arrayIndex = boost::multi_array<double, ND>::index;
+        using ndIndexArray = boost::array<arrayIndex, ND>;
+        boost::detail::multi_array::extent_gen<ND> output_extents;
+        std::vector<size_t> shape_list;
+        for (std::size_t i = 0; i < ND; i++)
+        {
+            shape_list.push_back(input_array.shape()[0]);
+        }
+        std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
+        boost::multi_array<T, ND> output_array(output_extents);
+
+        // Looping through the elements of the output array
+        const T *p = input_array.data();
+        ndIndexArray index;
+        for (std::size_t i = 0; i < input_array.num_elements(); i++)
+        {
+            index = getIndexArray(input_array, p);
+            output_array(index) = func(input_array(index));
+            ++p;
+        }
+        return output_array;
+    }
+
+    template <class T, long unsigned int ND>
+    inline boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
+    {
+        return element_wise_apply(input_array, &std::sqrt);
+    }
+    template <class T>
+    inline T sqrt(const T input)
+    {
+        return std::sqrt(input);
+    }
+
+    template <class T, long unsigned int ND>
+    inline boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
+    {
+        return element_wise_apply(input_array, &std::exp);
+    }
+    template <class T>
+    inline T exp(const T input)
+    {
+        return std::exp(input);
+    }
+
+    template <class T, long unsigned int ND>
+    boost::multi_array<T, ND> element_wise_duo_apply(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs, std::function<T(T, T)> func)
+    {
+        // Create output array copying extents
+        using arrayIndex = boost::multi_array<double, ND>::index;
+        using ndIndexArray = boost::array<arrayIndex, ND>;
+        boost::detail::multi_array::extent_gen<ND> output_extents;
+        std::vector<size_t> shape_list;
+        for (std::size_t i = 0; i < ND; i++)
+        {
+            shape_list.push_back(lhs.shape()[0]);
+        }
+        std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
+        boost::multi_array<T, ND> output_array(output_extents);
+
+        // Looping through the elements of the output array
+        const T *p = lhs.data();
+        ndIndexArray index;
+        for (std::size_t i = 0; i < lhs.num_elements(); i++)
+        {
+            index = getIndexArray(lhs, p);
+            output_array(index) = func(lhs(index), rhs(index));
+            ++p;
+        }
+        return output_array;
+    }
+
 }
+
+// Basic operators
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T, T)> func = std::multiplies<T>();
+    return np::element_wise_duo_apply(lhs, rhs, func);
+}
+template <class T, long unsigned int ND>
+boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T, T)> func = std::plus<T>();
+    return np::element_wise_duo_apply(lhs, rhs, func);
+}
+template <class T, long unsigned int ND>
+boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T, T)> func = std::minus<T>();
+    return np::element_wise_duo_apply(lhs, rhs, func);
+}
+template <class T, long unsigned int ND>
+boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T, T)> func = std::divides<T>();
+    return np::element_wise_duo_apply(lhs, rhs, func);
+}
+
 #endif
