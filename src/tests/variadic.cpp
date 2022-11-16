@@ -78,19 +78,53 @@ void test_meshgrid()
     }
 }
 
-void test_sqrt()
+void test_complex_operations()
 {
-    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
-    boost::multi_array<double, 1> y = np::sqrt(x);
+    int nx = 3;
+    int ny = 2;
+    boost::multi_array<double, 1> x = np::linspace(0, 1, nx);
+    boost::multi_array<double, 1> y = np::linspace(0, 1, ny);
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> my_arrays = np::meshgrid(axis, false, np::xy);
+    boost::multi_array<double, 2> A = np::sqrt(my_arrays[0]);
     std::cout << "sqrt\n";
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < ny; i++)
     {
-        std::cout << y[i] << ",";
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << A[i][j] << " ";
+        }
+        std::cout << "\n";
     }
     std::cout << "\n";
     float a = 100.0;
     float sqa = np::sqrt(a);
     std::cout << "sqrt of " << a << " is " << sqa << "\n";
+    std::cout << "exp\n";
+    boost::multi_array<double, 2> B = np::exp(my_arrays[0]);
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << B[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+
+    std::cout << "Power\n";
+    boost::multi_array<double, 1> x2 = np::linspace(1, 3, nx);
+    boost::multi_array<double, 1> y2 = np::linspace(1, 3, ny);
+    const boost::multi_array<double, 1> axis2[2] = {x2, y2};
+    std::vector<boost::multi_array<double, 2>> my_arrays2 = np::meshgrid(axis2, false, np::xy);
+    boost::multi_array<double, 2> C = np::pow(my_arrays2[1], 2.0);
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << C[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
 }
 
 void test_equal()
@@ -112,30 +146,45 @@ void test_equal()
 }
 void test_basic_operations()
 {
-    boost::multi_array<double, 1> x = np::linspace(0, 1, 5);
-    boost::multi_array<double, 1> y = np::linspace(-1, -5, 5);
+    int nx = 3;
+    int ny = 2;
+    boost::multi_array<double, 1> x = np::linspace(0, 1, nx);
+    boost::multi_array<double, 1> y = np::linspace(0, 1, ny);
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> my_arrays = np::meshgrid(axis, false, np::xy);
+
     std::cout << "basic operations:\n";
+
     std::cout << "addition:\n";
-    boost::multi_array<double, 1> my_arrays1 = x + y;
-    for (int i = 0; i < 5; i++)
+    boost::multi_array<double, 2> A = my_arrays[0] + my_arrays[1];
+
+    for (int i = 0; i < ny; i++)
     {
-        std::cout << my_arrays1[i] << ",";
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << A[i][j] << " ";
+        }
+        std::cout << "\n";
     }
-    std::cout << "\n";
+
     std::cout << "multiplication:\n";
-    boost::multi_array<double, 1> my_arrays2 = x * y;
-    for (int i = 0; i < 5; i++)
+    boost::multi_array<double, 2> B = my_arrays[0] * my_arrays[1];
+
+    for (int i = 0; i < ny; i++)
     {
-        std::cout << my_arrays2[i] << ",";
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << B[i][j] << " ";
+        }
+        std::cout << "\n";
     }
-    std::cout << "\n";
 }
 
 int main()
 {
     test_gradient();
     test_meshgrid();
-    test_sqrt();
+    test_complex_operations();
     test_equal();
     test_basic_operations();
 }

@@ -240,8 +240,9 @@ namespace np
         return output_arrays;
     }
 
+    // Cretes a new array and fills it with the values of the result of the function called on the input array element-wise
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, T (*func)(T))
+    inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
     {
 
         // Create output array copying extents
@@ -251,7 +252,7 @@ namespace np
         std::vector<size_t> shape_list;
         for (std::size_t i = 0; i < ND; i++)
         {
-            shape_list.push_back(input_array.shape()[0]);
+            shape_list.push_back(input_array.shape()[i]);
         }
         std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
         boost::multi_array<T, ND> output_array(output_extents);
@@ -268,10 +269,12 @@ namespace np
         return output_array;
     }
 
+    // Complex operations
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
     {
-        return element_wise_apply(input_array, &std::sqrt);
+        std::function<T(T)> func = (T(*)(T))std::sqrt;
+        return element_wise_apply(input_array, func);
     }
     template <class T>
     inline T sqrt(const T input)
@@ -282,7 +285,8 @@ namespace np
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
     {
-        return element_wise_apply(input_array, &std::exp);
+        std::function<T(T)> func = (T(*)(T))std::exp;
+        return element_wise_apply(input_array, func);
     }
     template <class T>
     inline T exp(const T input)
@@ -290,6 +294,33 @@ namespace np
         return std::exp(input);
     }
 
+    template <class T, long unsigned int ND>
+    inline boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
+    {
+        std::function<T(T)> func = std::log<T>();
+        return element_wise_apply(input_array, func);
+    }
+    template <class T>
+    inline T log(const T input)
+    {
+        return std::log(input);
+    }
+    template <class T, long unsigned int ND>
+    inline boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
+    {
+        std::function<T(T)> pow_func = [exponent](T input)
+        { return std::pow(input, exponent); };
+        return element_wise_apply(input_array, pow_func);
+    }
+    template <class T>
+    inline T pow(const T input, const T exponent)
+    {
+        return std::pow(input, exponent);
+    }
+
+    // Creates a new array in which the value at each index is the
+    // the result of the input function applied to an element of the left hand side array and one on the righ hand side array in the same index
+    // Outputs a copy of the result
     template <class T, long unsigned int ND>
     boost::multi_array<T, ND> element_wise_duo_apply(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs, std::function<T(T, T)> func)
     {
@@ -300,7 +331,7 @@ namespace np
         std::vector<size_t> shape_list;
         for (std::size_t i = 0; i < ND; i++)
         {
-            shape_list.push_back(lhs.shape()[0]);
+            shape_list.push_back(lhs.shape()[i]);
         }
         std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
         boost::multi_array<T, ND> output_array(output_extents);
@@ -316,7 +347,6 @@ namespace np
         }
         return output_array;
     }
-
 }
 
 // Basic operators
