@@ -1,4 +1,6 @@
-# COMSW4995
+![WaveSimC](WaveSimCLogo.png)
+
+# COMSW4995 Final Project: WaveSimC
 
 This is the repository for our final project.
 
@@ -31,4 +33,13 @@ make Main
 
 ```bash
 ./Main
+```
+
+## Building the documentation
+
+```bash
+doxygen dconfig
+cd documentations/latex
+pdflatex refman.tex
+cp refman.pdf ../WaveSimC-0.8-doc.pdf
 ```

@@ -9,12 +9,18 @@
 #include <iostream>
 #include <functional>
 
+/*!
+ *  \addtogroup np
+ *  @{
+ */
+
+//! Custom implementation of numpy in C++
 namespace np
 {
 
     typedef double ndArrayValue;
 
-    // Gets the index of one element in a multi_array in one axis
+    //! Gets the index of one element in a multi_array in one axis
     template <std::size_t ND>
     inline boost::multi_array<ndArrayValue, ND>::index
     getIndex(const boost::multi_array<ndArrayValue, ND> &m, const ndArrayValue *requestedElement, const unsigned short int direction)
@@ -23,7 +29,7 @@ namespace np
         return (offset / m.strides()[direction] % m.shape()[direction] + m.index_bases()[direction]);
     }
 
-    // Gets the index of one element in a multi_array
+    //! Gets the index of one element in a multi_array
     template <std::size_t ND>
     inline boost::array<typename boost::multi_array<ndArrayValue, ND>::index, ND>
     getIndexArray(const boost::multi_array<ndArrayValue, ND> &m, const ndArrayValue *requestedElement)
@@ -38,8 +44,8 @@ namespace np
         return _index;
     }
 
-    // Function to apply a function to all elements of a multi_array
-    // Simple overload
+    //! Function to apply a function to all elements of a multi_array
+    //! Simple overload
     template <typename Array, typename Element, typename Functor>
     inline void for_each(const boost::type<Element> &type_dispatch,
                          Array A, Functor &xform)
@@ -47,14 +53,14 @@ namespace np
         for_each(type_dispatch, A.begin(), A.end(), xform);
     }
 
-    // Function to apply a function to all elements of a multi_array
+    //! Function to apply a function to all elements of a multi_array
     template <typename Element, typename Functor>
     inline void for_each(const boost::type<Element> &, Element &Val, Functor &xform)
     {
         Val = xform(Val);
     }
 
-    // Function to apply a function to all elements of a multi_array
+    //! Function to apply a function to all elements of a multi_array
     template <typename Element, typename Iterator, typename Functor>
     inline void for_each(const boost::type<Element> &type_dispatch,
                          Iterator begin, Iterator end,
@@ -67,8 +73,8 @@ namespace np
         }
     }
 
-    // Function to apply a function to all elements of a multi_array
-    // Simple overload
+    //! Function to apply a function to all elements of a multi_array
+    //! Simple overload
     template <typename Array, typename Functor>
     inline void for_each(Array &A, Functor xform)
     {
@@ -76,9 +82,9 @@ namespace np
         for_each(boost::type<typename Array::element>(), A.begin(), A.end(), xform);
     }
 
-    // Takes the gradient of a n-dimensional multi_array
-    // Todo: Actually implement the gradient calculation
-    // template <long unsigned int ND, typename... Args>
+    //! Takes the gradient of a n-dimensional multi_array
+    //! Todo: Actually implement the gradient calculation
+    //! template <long unsigned int ND, typename... Args>
     template <long unsigned int ND>
     inline constexpr std::vector<boost::multi_array<double, ND>> gradient(boost::multi_array<double, ND> inArray, std::initializer_list<double> args)
     {
@@ -150,6 +156,7 @@ namespace np
         return output_arrays;
     }
 
+    //! Implements the numpy linspace function
     inline boost::multi_array<double, 1> linspace(double start, double stop, long unsigned int num)
     {
         double step = (stop - start) / (num - 1);
@@ -161,6 +168,8 @@ namespace np
         return output;
     }
 
+    //! Implements the numpy zeros function
+    //! Todo: make it work for any number of dimensions
     inline boost::multi_array<double, 1> zeros(long unsigned int num)
     {
         boost::multi_array<double, 1> output(boost::extents[num]);
@@ -177,11 +186,11 @@ namespace np
         ij
     };
 
-    // Implementation of meshgrid
-    // TODO: Implement sparsing=true
-    // If the indexing type is xx, then reverse the order of the first two elements of ci
-    // if the number of dimensions is 2 or 3
-    // In accordance with the numpy implementation
+    //! Implementation of meshgrid
+    //! TODO: Implement sparsing=true
+    //! If the indexing type is xx, then reverse the order of the first two elements of ci
+    //! if the number of dimensions is 2 or 3
+    //! In accordance with the numpy implementation
     template <long unsigned int ND>
     inline std::vector<boost::multi_array<double, ND>> meshgrid(const boost::multi_array<double, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
     {
@@ -240,7 +249,7 @@ namespace np
         return output_arrays;
     }
 
-    // Cretes a new array and fills it with the values of the result of the function called on the input array element-wise
+    //! Cretes a new array and fills it with the values of the result of the function called on the input array element-wise
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
     {
@@ -270,6 +279,7 @@ namespace np
     }
 
     // Complex operations
+
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
     {
@@ -318,9 +328,9 @@ namespace np
         return std::pow(input, exponent);
     }
 
-    // Creates a new array in which the value at each index is the
-    // the result of the input function applied to an element of the left hand side array and one on the righ hand side array in the same index
-    // Outputs a copy of the result
+    //! Creates a new array in which the value at each index is the
+    //! the result of the input function applied to an element of the left hand side array and one on the righ hand side array in the same index
+    //! Outputs a copy of the result
     template <class T, long unsigned int ND>
     boost::multi_array<T, ND> element_wise_duo_apply(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs, std::function<T(T, T)> func)
     {
@@ -350,6 +360,7 @@ namespace np
 }
 
 // Basic operators
+
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -374,5 +385,5 @@ boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, boost:
     std::function<T(T, T)> func = std::divides<T>();
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
-
+/*! @} End of Doxygen Groups*/
 #endif

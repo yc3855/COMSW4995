@@ -6,6 +6,8 @@ Testing
 Makefile
 Build/
 build/
+documentation/html
+documentation/latex
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
