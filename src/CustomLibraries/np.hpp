@@ -360,30 +360,106 @@ namespace np
 }
 
 // Basic operators
+// All of the are element-wise
 
+// Multiplication operator
+// Multiplication operator between two multi arrays, element-wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
     std::function<T(T, T)> func = std::multiplies<T>();
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
+
+// Multiplication operator between a multi array and a scalar
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator*(T const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T)> func = [lhs](T item)
+    { return lhs * item; };
+    return np::element_wise_apply(rhs, func);
+}
+// Multiplication operator between a multi array and a scalar
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, T const &rhs)
+{
+    return rhs * lhs;
+}
+
+// Plus operator
+// Addition operator between two multi arrays, element wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
     std::function<T(T, T)> func = std::plus<T>();
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
+
+// Addition operator between a multi array and a scalar
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator+(T const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T)> func = [lhs](T item)
+    { return lhs + item; };
+    return np::element_wise_apply(rhs, func);
+}
+
+// Addition operator between a scalar and a multi array
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, T const &rhs)
+{
+    return rhs + lhs;
+}
+
+// Subtraction operator
+// Minus operator between two multi arrays, element-wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
     std::function<T(T, T)> func = std::minus<T>();
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
+
+// Minus operator between a scalar and a multi array, element-wise
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator-(T const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T)> func = [lhs](T item)
+    { return lhs - item; };
+    return np::element_wise_apply(rhs, func);
+}
+
+// Minus operator between a multi array and a scalar, element-wise
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, T const &rhs)
+{
+    return rhs - lhs;
+}
+
+// Division operator
+// Division between two multi arrays, element wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
     std::function<T(T, T)> func = std::divides<T>();
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
+
+// Division between a scalar and a multi array, element wise
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator/(T const &lhs, boost::multi_array<T, ND> const &rhs)
+{
+    std::function<T(T)> func = [lhs](T item)
+    { return lhs / item; };
+    return np::element_wise_apply(rhs, func);
+}
+
+// Division between a multi array and a scalar, element wise
+template <class T, long unsigned int ND>
+inline boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, T const &rhs)
+{
+    return rhs / lhs;
+}
+
 /*! @} End of Doxygen Groups*/
 #endif

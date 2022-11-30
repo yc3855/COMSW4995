@@ -178,6 +178,22 @@ void test_basic_operations()
         }
         std::cout << "\n";
     }
+    double coeff = 3;
+    boost::multi_array<double, 1> t = np::linspace(0, 1, nx);
+    boost::multi_array<double, 1> t_time_3 = coeff * t;
+    boost::multi_array<double, 1> t_time_2 = 2.0 * t;
+    std::cout << "t_time_3: ";
+    for (int j = 0; j < nx; j++)
+    {
+        std::cout << t_time_3[j] << " ";
+    }
+    std::cout << "\n";
+    std::cout << "t_time_2: ";
+    for (int j = 0; j < nx; j++)
+    {
+        std::cout << t_time_2[j] << " ";
+    }
+    std::cout << "\n";
 }
 
 int main()
