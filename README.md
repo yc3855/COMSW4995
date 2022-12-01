@@ -37,9 +37,15 @@ make Main
 
 ## Building the documentation
 
+Docs building script:
+
+```bash
+./compileDocs.sh
+```
+
 ```bash
 doxygen dconfig
-cd documentations/latex
+cd documentation/latex
 pdflatex refman.tex
 cp refman.pdf ../WaveSimC-0.8-doc.pdf
 ```
