@@ -8,6 +8,7 @@
 #include <cassert>
 #include <iostream>
 #include <functional>
+#include <type_traits>
 
 /*!
  *  \addtogroup np
@@ -164,18 +165,6 @@ namespace np
         for (std::size_t i = 0; i < num; i++)
         {
             output[i] = start + i * step;
-        }
-        return output;
-    }
-
-    //! Implements the numpy zeros function
-    //! Todo: make it work for any number of dimensions
-    inline boost::multi_array<double, 1> zeros(long unsigned int num)
-    {
-        boost::multi_array<double, 1> output(boost::extents[num]);
-        for (std::size_t i = 0; i < num; i++)
-        {
-            output[i] = 0;
         }
         return output;
     }
@@ -357,13 +346,33 @@ namespace np
         }
         return output_array;
     }
+
+    //! Implements the numpy zeros function for an n-dimensionl multi array
+    template <typename T, typename inT, long unsigned int ND>
+    inline boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND]) requires std::is_integral<inT>::value && std::is_arithmetic<T>::value
+    {
+        // Deducing the extents of the N-Dimensional output
+        boost::detail::multi_array::extent_gen<ND> output_extents;
+        std::vector<size_t> shape_list;
+        for (std::size_t i = 0; i < ND; i++)
+        {
+            shape_list.push_back(dimensions_input[i]);
+        }
+        std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
+        // Applying a function to return zero always to all of its elements
+        boost::multi_array<T, ND> output_array(output_extents);
+        std::function<T(T)> zero_func = [](T input)
+        { return 0; };
+        return element_wise_apply(output_array, zero_func);
+    }
 }
 
+// Override of operators in the boost::multi_array class to make them more np-like
 // Basic operators
 // All of the are element-wise
 
 // Multiplication operator
-// Multiplication operator between two multi arrays, element-wise
+//! Multiplication operator between two multi arrays, element-wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -371,7 +380,7 @@ inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs,
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
 
-// Multiplication operator between a multi array and a scalar
+//! Multiplication operator between a multi array and a scalar
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator*(T const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -379,7 +388,7 @@ inline boost::multi_array<T, ND> operator*(T const &lhs, boost::multi_array<T, N
     { return lhs * item; };
     return np::element_wise_apply(rhs, func);
 }
-// Multiplication operator between a multi array and a scalar
+//! Multiplication operator between a multi array and a scalar
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs, T const &rhs)
 {
@@ -387,7 +396,7 @@ inline boost::multi_array<T, ND> operator*(boost::multi_array<T, ND> const &lhs,
 }
 
 // Plus operator
-// Addition operator between two multi arrays, element wise
+//! Addition operator between two multi arrays, element wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -395,7 +404,7 @@ boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, boost:
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
 
-// Addition operator between a multi array and a scalar
+//! Addition operator between a multi array and a scalar
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator+(T const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -404,7 +413,7 @@ inline boost::multi_array<T, ND> operator+(T const &lhs, boost::multi_array<T, N
     return np::element_wise_apply(rhs, func);
 }
 
-// Addition operator between a scalar and a multi array
+//! Addition operator between a scalar and a multi array
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs, T const &rhs)
 {
@@ -412,7 +421,7 @@ inline boost::multi_array<T, ND> operator+(boost::multi_array<T, ND> const &lhs,
 }
 
 // Subtraction operator
-// Minus operator between two multi arrays, element-wise
+//! Minus operator between two multi arrays, element-wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -420,7 +429,7 @@ boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, boost:
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
 
-// Minus operator between a scalar and a multi array, element-wise
+//! Minus operator between a scalar and a multi array, element-wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator-(T const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -429,7 +438,7 @@ inline boost::multi_array<T, ND> operator-(T const &lhs, boost::multi_array<T, N
     return np::element_wise_apply(rhs, func);
 }
 
-// Minus operator between a multi array and a scalar, element-wise
+//! Minus operator between a multi array and a scalar, element-wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs, T const &rhs)
 {
@@ -437,7 +446,7 @@ inline boost::multi_array<T, ND> operator-(boost::multi_array<T, ND> const &lhs,
 }
 
 // Division operator
-// Division between two multi arrays, element wise
+//! Division between two multi arrays, element wise
 template <class T, long unsigned int ND>
 boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -445,7 +454,7 @@ boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, boost:
     return np::element_wise_duo_apply(lhs, rhs, func);
 }
 
-// Division between a scalar and a multi array, element wise
+//! Division between a scalar and a multi array, element wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator/(T const &lhs, boost::multi_array<T, ND> const &rhs)
 {
@@ -454,7 +463,7 @@ inline boost::multi_array<T, ND> operator/(T const &lhs, boost::multi_array<T, N
     return np::element_wise_apply(rhs, func);
 }
 
-// Division between a multi array and a scalar, element wise
+//! Division between a multi array and a scalar, element wise
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, T const &rhs)
 {

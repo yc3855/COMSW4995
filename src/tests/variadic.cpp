@@ -196,6 +196,23 @@ void test_basic_operations()
     std::cout << "\n";
 }
 
+void test_zeros()
+{
+    int nx = 3;
+    int ny = 2;
+    int dimensions[] = {ny, nx};
+    boost::multi_array<double, 2> A = np::zeros<double>(dimensions);
+    std::cout << "zeros:\n";
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << A[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
 int main()
 {
     test_gradient();
@@ -203,4 +220,5 @@ int main()
     test_complex_operations();
     test_equal();
     test_basic_operations();
+    test_zeros();
 }
