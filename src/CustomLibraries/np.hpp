@@ -9,6 +9,7 @@
 #include <iostream>
 #include <functional>
 #include <type_traits>
+#include <concepts>
 
 /*!
  *  \addtogroup np
@@ -349,7 +350,7 @@ namespace np
 
     //! Implements the numpy zeros function for an n-dimensionl multi array
     template <typename T, typename inT, long unsigned int ND>
-    inline boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND]) requires std::is_integral<inT>::value && std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND]) requires std::is_integral<inT>::value && std::is_arithmetic<T>::value
     {
         // Deducing the extents of the N-Dimensional output
         boost::detail::multi_array::extent_gen<ND> output_extents;
@@ -364,6 +365,76 @@ namespace np
         std::function<T(T)> zero_func = [](T input)
         { return 0; };
         return element_wise_apply(output_array, zero_func);
+    }
+
+    //! Implements the numpy max function for an n-dimensionl multi array
+    template <typename T, long unsigned int ND>
+    inline constexpr T max(boost::multi_array<T, ND> const &input_array) requires std::is_arithmetic<T>::value
+    {
+        T max = 0;
+        bool max_not_set = true;
+        const T *data_pointer = input_array.data();
+        for (std::size_t i = 0; i < input_array.num_elements(); i++)
+        {
+            T element = *data_pointer;
+            if (max_not_set || element > max)
+            {
+                max = element;
+                max_not_set = false;
+            }
+            ++data_pointer;
+        }
+        return max;
+    }
+
+    //! Implements the numpy max function for an variadic number of arguments
+    template <class T, class... Ts, class = std::enable_if_t<(std::is_same_v<T, Ts> && ...)>>
+    inline constexpr T max(T input1, Ts... inputs) requires std::is_arithmetic<T>::value
+    {
+        T max = input1;
+        for (T input : {inputs...})
+        {
+            if (input > max)
+            {
+                max = input;
+            }
+        }
+        return max;
+    }
+
+    //! Implements the numpy min function for an n-dimensionl multi array
+    template <typename T, long unsigned int ND>
+    inline constexpr T min(boost::multi_array<T, ND> const &input_array) requires std::is_arithmetic<T>::value
+    {
+        T min = 0;
+        bool min_not_set = true;
+        const T *data_pointer = input_array.data();
+        for (std::size_t i = 0; i < input_array.num_elements(); i++)
+        {
+            T element = *data_pointer;
+            if (min_not_set || element < min)
+            {
+                min = element;
+                min_not_set = false;
+            }
+            ++data_pointer;
+        }
+        return min;
+    }
+
+    //! Implements the numpy min function for an variadic number of arguments
+    template <class T, class... Ts, class = std::enable_if_t<(std::is_same_v<T, Ts> && ...)>>
+    inline constexpr T min(T input1, Ts... inputs) requires std::is_arithmetic<T>::value
+    {
+        T min = input1;
+        for (T input : {inputs...})
+        {
+            if (input < min)
+            {
+                min = input;
+            }
+        }
+        return min;
     }
 }
 

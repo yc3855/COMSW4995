@@ -213,6 +213,20 @@ void test_zeros()
     }
 }
 
+void test_min_max()
+{
+    int nx = 24;
+    int ny = 5;
+    boost::multi_array<double, 1> x = np::linspace(0, 10, nx);
+    boost::multi_array<double, 1> y = np::linspace(-1, 1, ny);
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> my_array = np::meshgrid(axis, false, np::xy);
+    std::cout << "min: " << np::min(my_array[0]) << "\n";
+    std::cout << "max: " << np::max(my_array[1]) << "\n";
+    std::cout << "max simple: " << np::max(1.0, 2.0, 3.0, 4.0, 5.0) << "\n";
+    std::cout << "min simple: " << np::min(1, -2, 3, -4, 5) << "\n";
+}
+
 int main()
 {
     test_gradient();
@@ -221,4 +235,5 @@ int main()
     test_equal();
     test_basic_operations();
     test_zeros();
+    test_min_max();
 }
