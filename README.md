@@ -10,6 +10,8 @@ In addition, a custom implementation of numpy in modern C++ is also included as 
 That library aims to make c++ more pythonic and easier to use for scientific computing.
 Instead of numpy n-dimensional arrays the library use boost::multi_array and contains many utilities to expand the functionality of the library.
 
+## [Detailed documentation](http://wavesimc.vbpage.net/)
+
 ## Authors
 
 Victor Barros - Undergradute Student - Mechanical Engineering - Columbia University
@@ -88,6 +90,8 @@ Docs building script:
 ```bash
 ./compileDocs.sh
 ```
+
+Manually:
 
 ```bash
 doxygen dconfig
