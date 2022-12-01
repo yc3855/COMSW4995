@@ -9,7 +9,6 @@
 #include <iostream>
 #include <functional>
 #include <type_traits>
-#include <concepts>
 
 /*!
  *  \addtogroup np
