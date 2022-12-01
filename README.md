@@ -40,7 +40,7 @@ We started with the implementation of the functions used in the python version o
 
 The library is contained in a header library format for easy of use.
 
-## Multi Arrays how math is done on them
+## Multi Arrays and how math is done on them
 
 Representing arrays with more than one dimensions is a difficult task in any programming language, specially in a language like C++ that implements strict type checking. To implement that in a flexible and typesafe way, we chose to build our code around the boost::multi_array. This library provides a container that can be used to represent arrays with any number of dimensions. The library is very flexible and allows the user to define the type of the array and the number of dimensions at compile time. The library is sadly not very well documented but the documentation can be found here: https://www.boost.org/doc/libs/1_75_0/libs/multi_array/doc/index.html
 
