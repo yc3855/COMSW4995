@@ -49,8 +49,8 @@ In our simulation, the numerical scheme we use is the finite difference method w
 ## References
 <a id="1">[1]</a> 
 Johnson, Steven G. (2021). 
-Notes on perfectly matched layers (PMLs) 
-arXiv preprint arXiv:2108.05348
+Notes on perfectly matched layers (PMLs).
+arXiv preprint arXiv:2108.05348.
 
 ## Design Philosophy
 
