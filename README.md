@@ -4,7 +4,7 @@
 
 This is the repository for our final project for the discpline COMSW4995: Design in C++ at Columbia University during the Fall of 2022.
 
-This project aims to implement in modern C++ a walve equation solver for geophysical application.
+This project aims to implement in modern C++ a wave equation solver for geophysical application.
 
 In addition, a custom implementation of numpy in modern C++ is also included as a header library.
 That library aims to make c++ more pythonic and easier to use for scientific computing.
@@ -27,6 +27,9 @@ We would like to thank Professor Bjarne Stroustrup for his guidance and support 
 ## Wave solving
 
 Wave equation is a partial differential equation that describes the propagation of waves in a medium. The wave equation is given by:
+$$
+\frac{\partial ^2 u}{\partial t^2}
+$$
 
 ## Design Philosophy
 
