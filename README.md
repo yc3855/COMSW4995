@@ -30,6 +30,9 @@ Wave equation is a partial differential equation that describes the propagation 
 $$
 \frac{\partial ^2 u}{\partial t^2}
 $$
+```math
+SE = \frac{\sigma}{\sqrt{n}}
+```
 
 ## Design Philosophy
 
