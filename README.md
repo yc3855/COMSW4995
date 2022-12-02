@@ -24,14 +24,27 @@ We would like to thank Professor Bjarne Stroustrup for his guidance and support 
 
 # Theory
 
-## Wave solving
+## Wave simulation
 
-Wave equation is a partial differential equation that describes the propagation of waves in a medium. The wave equation is given by:
-$$
-\frac{\partial ^2 u}{\partial t^2}
-$$
+When waves travel in an inhomogeneous medium, they may be delayed, reflected, and refracted, and the wave data encodes information about the medium—this is what makes geophysical imaging possible. The propagation of waves in a medium is described by a partial differential equation known as the wave equation. In two dimension, the wave equation is given by:
+
 ```math
-SE = \frac{\sigma}{\sqrt{n}}
+\begin{align*}
+\frac{1}{v^2}\frac{\partial ^2 u}{\partial t^2} - \bigg(\frac{\partial ^2 u}{\partial x^2} + \frac{\partial ^2 u}{\partial y^2} \bigg) = f &\qquad \text{in }\mathbb{R}^2 \times (0,T)\\
+u|_{t=0} = \frac{\partial u}{\partial t}\bigg|_{t = 0} = 0 & \qquad \text{in }\mathbb{R}^2.
+\end{align*}
+```
+In our simulation, we use the following numerical method:
+```math
+\begin{equation}
+	\begin{aligned}
+		u^{n+1}
+		&= \bigg[ \left(\frac{\Delta t}{2}(\sigma_1+\sigma_2) - 1\right) u^{n-1}  + \left(2 - (\Delta t)^2 \sigma_1\sigma_2  \right)u^n \\
+		&\qquad+ (\Delta t)^2v^2\left(\Delta u^{n} - \nabla\cdot ({\boldsymbol \sigma} \odot {\boldsymbol q}^n) + \sigma_2\frac{\partial  q_1^n}{\partial x} +\sigma_1\frac{\partial  q_2^n}{\partial y} +f^n \right) \bigg]\bigg/\left(\frac{\Delta t}{2}(\sigma_1+\sigma_2) + 1\right) \\
+		q_1^{n+1} & = \left[ \Delta t \frac{\partial }{\partial x}\left( \frac{u^n+u^{n+1}}{2} \right) + \left( 1-\frac{\Delta t}{2} \sigma_1\right) q_1^{n}\right] \bigg/ \left( 1+\frac{\Delta t}{2} \sigma_1\right) \\
+		q_2^{n+1} &= \left[ \Delta t \frac{\partial }{\partial y}\left( \frac{u^n+u^{n+1}}{2} \right) + \left( 1-\frac{\Delta t}{2} \sigma_2\right) q_2^{n} \right] \bigg / \left( 1+\frac{\Delta t}{2} \sigma_2\right) .
+	\end{aligned}
+\end{equation}
 ```
 
 ## Design Philosophy
