@@ -85,7 +85,6 @@ namespace np
 
     //! Takes the gradient of a n-dimensional multi_array
     //! Todo: Actually implement the gradient calculation
-    //! template <long unsigned int ND, typename... Args>
     template <long unsigned int ND>
     inline constexpr std::vector<boost::multi_array<double, ND>> gradient(boost::multi_array<double, ND> inArray, std::initializer_list<double> args)
     {
@@ -362,7 +361,7 @@ namespace np
 
     //! Implements the numpy zeros function for an n-dimensionl multi array
     template <typename T, typename inT, long unsigned int ND>
-    inline constexpr boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND]) requires std::is_integral<inT>::value && std::is_arithmetic<T>::value
+    requires std::is_integral<inT>::value && std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND])
     {
         // Deducing the extents of the N-Dimensional output
         boost::detail::multi_array::extent_gen<ND> output_extents;
@@ -381,7 +380,7 @@ namespace np
 
     //! Implements the numpy max function for an n-dimensionl multi array
     template <typename T, long unsigned int ND>
-    inline constexpr T max(boost::multi_array<T, ND> const &input_array) requires std::is_arithmetic<T>::value
+    requires std::is_arithmetic<T>::value inline constexpr T max(boost::multi_array<T, ND> const &input_array)
     {
         T max = 0;
         bool max_not_set = true;
@@ -401,7 +400,7 @@ namespace np
 
     //! Implements the numpy max function for an variadic number of arguments
     template <class T, class... Ts, class = std::enable_if_t<(std::is_same_v<T, Ts> && ...)>>
-    inline constexpr T max(T input1, Ts... inputs) requires std::is_arithmetic<T>::value
+    requires std::is_arithmetic<T>::value inline constexpr T max(T input1, Ts... inputs)
     {
         T max = input1;
         for (T input : {inputs...})
@@ -416,7 +415,7 @@ namespace np
 
     //! Implements the numpy min function for an n-dimensionl multi array
     template <typename T, long unsigned int ND>
-    inline constexpr T min(boost::multi_array<T, ND> const &input_array) requires std::is_arithmetic<T>::value
+    requires std::is_arithmetic<T>::value inline constexpr T min(boost::multi_array<T, ND> const &input_array)
     {
         T min = 0;
         bool min_not_set = true;
@@ -448,6 +447,23 @@ namespace np
         }
         return min;
     }
+
+    //! Implements the numpy abs function for an n-dimensionl multi array
+    template <typename T, long unsigned int ND>
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> abs(boost::multi_array<T, ND> const &input_array)
+    {
+        std::function<T(T)> abs_func = [](T input)
+        { return std::abs(input); };
+        return element_wise_apply(input_array, abs_func);
+    }
+
+    //! Implements the numpy abs function for a scalar
+    template <typename T>
+    requires std::is_arithmetic<T>::value inline constexpr T abs(T input)
+    {
+        return std::abs(input);
+    }
+
 }
 
 // Override of operators in the boost::multi_array class to make them more np-like

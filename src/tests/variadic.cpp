@@ -251,9 +251,29 @@ void test_toy_problem()
     int i, j;
     i = 10;
     j = 20;
-    std::cout << "df/dx at x = " << x[i] << " and y = " << y[j] << " is equal to " << gradf[0][i][j];
+    std::cout << "df/dx of f(x,y) = x^2 + xy at x = " << x[i] << " and y = " << y[j] << " is equal to " << gradf[0][i][j];
 
     std::cout << "\n";
+}
+
+void test_abs()
+{
+    int nx = 4;
+    int ny = 4;
+    boost::multi_array<double, 1> x = np::linspace(-1, 1, nx);
+    boost::multi_array<double, 1> y = np::linspace(-1, 1, ny);
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> XcY = np::meshgrid(axis, false, np::xy);
+    boost::multi_array<double, 2> abs_f = np::abs(XcY[0]);
+    std::cout << "abs_f: \n";
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << abs_f[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
 }
 
 int main()
@@ -265,5 +285,6 @@ int main()
     test_basic_operations();
     test_zeros();
     test_min_max();
+    test_abs();
     test_toy_problem();
 }
