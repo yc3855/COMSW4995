@@ -276,6 +276,41 @@ void test_abs()
     }
 }
 
+void test_slice()
+{
+    int nx = 4;
+    int ny = 4;
+    boost::multi_array<double, 1> x = np::linspace(-1, 1, nx);
+    boost::multi_array<double, 1> y = np::linspace(-1, 1, ny);
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> XcY = np::meshgrid(axis, false, np::xy);
+    boost::multi_array<double, 2> f = np::pow(XcY[0], 2.0) + XcY[0] * np::pow(XcY[1], 1.0);
+    std::cout << "f: \n";
+    for (int i = 0; i < ny; i++)
+    {
+        for (int j = 0; j < nx; j++)
+        {
+            std::cout << f[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "f[0]: \n";
+    boost::multi_array<double, 1> f_slice = np::slice(f, 0);
+    for (int i = 0; i < nx; i++)
+    {
+        std::cout << f_slice[i] << " ";
+    }
+    std::cout << "\n";
+
+    std::cout << "f[1]: \n";
+    f_slice = np::slice(f, 1);
+    for (int i = 0; i < ny; i++)
+    {
+        std::cout << f_slice[i] << " ";
+    }
+    std::cout << "\n";
+}
+
 int main()
 {
     test_gradient();
@@ -287,4 +322,5 @@ int main()
     test_min_max();
     test_abs();
     test_toy_problem();
+    test_slice();
 }

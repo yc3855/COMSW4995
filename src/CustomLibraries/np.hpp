@@ -465,6 +465,33 @@ namespace np
         return std::abs(input);
     }
 
+    //! Slices the array through one dimension and returns a ND - 1 dimensional array
+    template <typename T, long unsigned int ND>
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND - 1> slice(boost::multi_array<T, ND> const &input_array, std::size_t slice_index)
+    {
+
+        // Deducing the extents of the N-Dimensional output
+        boost::detail::multi_array::extent_gen<ND - 1> output_extents;
+        std::vector<size_t> shape_list;
+        for (std::size_t i = 1; i < ND; i++)
+        {
+            shape_list.push_back(input_array.shape()[i]);
+        }
+        std::copy(shape_list.begin(), shape_list.end(), output_extents.ranges_.begin());
+
+        boost::multi_array<T, ND - 1> output_array(output_extents);
+
+        const T *p = input_array.data();
+        boost::array<std::size_t, ND> index;
+        for (std::size_t i = 0; i < input_array.num_elements(); i++)
+        {
+            index = getIndexArray(input_array, p);
+            output_array(index) = input_array[slice_index](index);
+            p++;
+        }
+        return output_array;
+    }
+
 }
 
 // Override of operators in the boost::multi_array class to make them more np-like
