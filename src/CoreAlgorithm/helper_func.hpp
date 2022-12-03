@@ -21,16 +21,16 @@ boost::multi_array<double, 2> dfdz(boost::multi_array<double, 2> f, double dz)
 
 boost::multi_array<double, 2> d2fdx2(boost::multi_array<double, 2> f, double dx)
 {
-    boost::multi_array<double, 2> f_x = dfdx(f, dx);
-    boost::multi_array<double, 2> f_xx = dfdx(f_x, dx);
-    return f_xx;
+    boost::multi_array<double, 2> df = dfdx(f, dx);
+    boost::multi_array<double, 2> df2 = dfdx(df, dx);
+    return df2;
 }
 
 boost::multi_array<double, 2> d2fdz2(boost::multi_array<double, 2> f, double dz)
 {
-    boost::multi_array<double, 2> f_z = dfdz(f, dz);
-    boost::multi_array<double, 2> f_zz = dfdx(f_z, dz);
-    return f_zz;
+    boost::multi_array<double, 2> df = dfdz(f, dz);
+    boost::multi_array<double, 2> df2 = dfdz(df, dz);
+    return df2;
 }
 
 boost::multi_array<double, 2> divergence(boost::multi_array<double, 2> f1, boost::multi_array<double, 2> f2,
@@ -39,7 +39,7 @@ boost::multi_array<double, 2> divergence(boost::multi_array<double, 2> f1, boost
     boost::multi_array<double, 2> f_x = dfdx(f1, dx);
     boost::multi_array<double, 2> f_z = dfdz(f2, dz);
     // TODO: use element-wize add
-    div = f1 + f2;
+    boost::multi_array<double, 2> div = f_x + f_z;
     return div;
 }
 
