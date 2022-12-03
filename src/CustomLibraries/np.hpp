@@ -85,23 +85,23 @@ namespace np
 
     //! Takes the gradient of a n-dimensional multi_array
     //! Todo: Actually implement the gradient calculation
-    template <long unsigned int ND>
-    inline constexpr std::vector<boost::multi_array<double, ND>> gradient(boost::multi_array<double, ND> inArray, std::initializer_list<double> args)
+    template <typename T, long unsigned int ND>
+    requires std::is_floating_point<T>::value inline constexpr std::vector<boost::multi_array<T, ND>> gradient(boost::multi_array<T, ND> inArray, std::initializer_list<T> args)
     {
         // static_assert(args.size() == ND, "Number of arguments must match the number of dimensions of the array");
-        using arrayIndex = boost::multi_array<double, ND>::index;
+        using arrayIndex = boost::multi_array<T, ND>::index;
 
         using ndIndexArray = boost::array<arrayIndex, ND>;
 
         // constexpr std::size_t n = sizeof...(Args);
         std::size_t n = args.size();
         // std::tuple<Args...> store(args...);
-        std::vector<double> arg_vector = args;
-        boost::multi_array<double, ND> my_array;
-        std::vector<boost::multi_array<double, ND>> output_arrays;
+        std::vector<T> arg_vector = args;
+        boost::multi_array<T, ND> my_array;
+        std::vector<boost::multi_array<T, ND>> output_arrays;
         for (std::size_t i = 0; i < n; i++)
         {
-            boost::multi_array<double, ND> dfdh = inArray;
+            boost::multi_array<T, ND> dfdh = inArray;
             output_arrays.push_back(dfdh);
         }
 
@@ -123,7 +123,7 @@ namespace np
             for (std::size_t j = 0; j < n; j++)
             {
                 ndIndexArray index_high = index;
-                double dh_high;
+                T dh_high;
                 if ((long unsigned int)index_high[j] < inArray.shape()[j] - 1)
                 {
                     index_high[j] += 1;
@@ -134,7 +134,7 @@ namespace np
                     dh_high = 0;
                 }
                 ndIndexArray index_low = index;
-                double dh_low;
+                T dh_low;
                 if (index_low[j] > 0)
                 {
                     index_low[j] -= 1;
@@ -145,8 +145,8 @@ namespace np
                     dh_low = 0;
                 }
 
-                double dh = dh_high + dh_low;
-                double gradient = (inArray(index_high) - inArray(index_low)) / dh;
+                T dh = dh_high + dh_low;
+                T gradient = (inArray(index_high) - inArray(index_low)) / dh;
                 // std::cout << gradient << "\n";
                 output_arrays[j](index) = gradient;
             }
@@ -179,13 +179,14 @@ namespace np
     //! If the indexing type is xx, then reverse the order of the first two elements of ci
     //! if the number of dimensions is 2 or 3
     //! In accordance with the numpy implementation
-    template <long unsigned int ND>
-    inline std::vector<boost::multi_array<double, ND>> meshgrid(const boost::multi_array<double, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
+    template <typename T, long unsigned int ND>
+    requires std::is_arithmetic<T>::value inline constexpr std::vector<boost::multi_array<T, ND>> meshgrid(const boost::multi_array<T, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
     {
-        using arrayIndex = boost::multi_array<double, ND>::index;
+        using arrayIndex = boost::multi_array<T, ND>::index;
+        using oneDArrayIndex = boost::multi_array<T, 1>::index;
         using ndIndexArray = boost::array<arrayIndex, ND>;
-        std::vector<boost::multi_array<double, ND>> output_arrays;
-        boost::multi_array<double, 1> ci[ND];
+        std::vector<boost::multi_array<T, ND>> output_arrays;
+        boost::multi_array<T, 1> ci[ND];
         // Copy elements of cinput to ci, do the proper inversions
         for (std::size_t i = 0; i < ND; i++)
         {
@@ -204,7 +205,7 @@ namespace np
                     break;
                 }
             }
-            ci[i] = boost::multi_array<double, 1>();
+            ci[i] = boost::multi_array<T, 1>();
             ci[i].resize(boost::extents[cinput[source].num_elements()]);
             ci[i] = cinput[source];
         }
@@ -220,14 +221,14 @@ namespace np
         // Creating the output arrays
         for (std::size_t i = 0; i < ND; i++)
         {
-            boost::multi_array<double, ND> output_array(output_extents);
+            boost::multi_array<T, ND> output_array(output_extents);
             ndArrayValue *p = output_array.data();
             ndIndexArray index;
             // Looping through the elements of the output array
             for (std::size_t j = 0; j < output_array.num_elements(); j++)
             {
                 index = getIndexArray(output_array, p);
-                boost::multi_array<double, 1>::index index_1d;
+                oneDArrayIndex index_1d;
                 index_1d = index[i];
                 output_array(index) = ci[i][index_1d];
                 ++p;
@@ -239,7 +240,7 @@ namespace np
 
     //! Creates a new array and fills it with the values of the result of the function called on the input array element-wise
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
     {
 
         // Create output array copying extents
@@ -270,7 +271,7 @@ namespace np
 
     //! Implements the numpy sqrt function on multi arrays
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::sqrt;
         return element_wise_apply(input_array, func);
@@ -278,14 +279,14 @@ namespace np
 
     //! Implements the numpy sqrt function on scalars
     template <class T>
-    inline T sqrt(const T input)
+    requires std::is_arithmetic<T>::value inline constexpr T sqrt(const T input)
     {
         return std::sqrt(input);
     }
 
     //! Implements the numpy exp function on multi arrays
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::exp;
         return element_wise_apply(input_array, func);
@@ -293,14 +294,14 @@ namespace np
 
     //! Implements the numpy exp function on scalars
     template <class T>
-    inline T exp(const T input)
+    requires std::is_arithmetic<T>::value inline constexpr T exp(const T input)
     {
         return std::exp(input);
     }
 
     //! Implements the numpy log function on multi arrays
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = std::log<T>();
         return element_wise_apply(input_array, func);
@@ -308,14 +309,14 @@ namespace np
 
     //! Implements the numpy log function on scalars
     template <class T>
-    inline T log(const T input)
+    requires std::is_arithmetic<T>::value inline constexpr T log(const T input)
     {
         return std::log(input);
     }
 
     //! Implements the numpy pow function on multi arrays
     template <class T, long unsigned int ND>
-    inline boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
+    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
     {
         std::function<T(T)> pow_func = [exponent](T input)
         { return std::pow(input, exponent); };
@@ -324,7 +325,7 @@ namespace np
 
     //! Implements the numpy pow function on scalars
     template <class T>
-    inline T pow(const T input, const T exponent)
+    requires std::is_arithmetic<T>::value inline constexpr T pow(const T input, const T exponent)
     {
         return std::pow(input, exponent);
     }
@@ -333,7 +334,7 @@ namespace np
     //! the result of the input function applied to an element of the left hand side array and one on the righ hand side array in the same index
     //! Outputs a copy of the result
     template <class T, long unsigned int ND>
-    boost::multi_array<T, ND> element_wise_duo_apply(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs, std::function<T(T, T)> func)
+    inline constexpr boost::multi_array<T, ND> element_wise_duo_apply(boost::multi_array<T, ND> const &lhs, boost::multi_array<T, ND> const &rhs, std::function<T(T, T)> func)
     {
         // Create output array copying extents
         using arrayIndex = boost::multi_array<double, ND>::index;
