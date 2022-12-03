@@ -227,6 +227,28 @@ void test_min_max()
     std::cout << "min simple: " << np::min(1, -2, 3, -4, 5) << "\n";
 }
 
+void test_toy_problem()
+{
+    boost::multi_array<double, 1> x = np::linspace(0, 1, 100);
+    boost::multi_array<double, 1> y = np::linspace(0, 1, 100);
+    x = np::pow(x, 2.0);
+    y = np::pow(y, 3.0);
+
+    const boost::multi_array<double, 1> axis[2] = {x, y};
+    std::vector<boost::multi_array<double, 2>> XY = np::meshgrid(axis, false, np::xy);
+
+    double dx, dy;
+    dx = 1.0 / 100.0;
+    dy = 1.0 / 100.0;
+    std::vector<boost::multi_array<double, 2>> g = np::gradient(XY, {dx, dy});
+
+    i = 10;
+    j = 20;
+    std::cout << "df/dx at x = " << x[i] << " and y = " << y[j] << " is equal to" << g[0][i][j];
+
+    std::cout << "\n";
+}
+
 int main()
 {
     test_gradient();
