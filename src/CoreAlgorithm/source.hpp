@@ -6,23 +6,30 @@
 #define WAVESIMC_SOURCE_HPP
 
 
-boost::multi_array<double, 3> ricker(int i_s, int j_s, double f=10, double amp=1e0, double shift=0.1)
+boost::multi_array<double, 3> ricker(int i_s, int j_s, double f, double amp, double shift,
+                                     double tmin, double tmax, int nt, int nx, int nz)
 {
     const double pi = 3.141592654;
 
     boost::multi_array<double, 1> t = np::linspace(tmin, tmax, nt);
+    boost::multi_array<double, 1> pft2 = np::pow(pi * f * (t - shift), 2.0);
+    boost::multi_array<double, 1> r = amp * (1.0 - 2.0 * pft2) * np::exp(-1.0 * pft2);
 
-    // TODO: element-wise operators
-    boost::multi_array<double, 1> pft2 = (pi * f * (t - shift))**2;
-    boost::multi_array<double, 1> r = amp * (1 - 2 * pft2) * exp(-pft2);
+    int dimensions_x[] = {nx};
+    boost::multi_array<double, 1> x = np::zeros<double>(dimensions_x);
 
-    boost::multi_array<double, 1> x = np.zeros(nx);
-    boost::multi_array<double, 1> z = np.zeros(nz);
+    int dimensions_z[] = {nz};
+    boost::multi_array<double, 1> z = np::zeros<double>(dimensions_z);
+
     x[i_s] = 1.0;
     z[j_s] = 1.0;
-    boost::multi_array<double, 3> TXZ = np::meshgrid(r, x, z, sparse=True, indexing='ij');
 
-    return TXZ;
+    const boost::multi_array<double, 1> axis[3] = {r, x, z};
+    std::vector<boost::multi_array<double, 3>> RXZ = np::meshgrid(axis, false, np::xy);
+
+    boost::multi_array<double, 3> source = RXZ[0] * RXZ[1] * RXZ[2];
+
+    return source;
 }
 
 #endif //WAVESIMC_SOURCE_HPP
