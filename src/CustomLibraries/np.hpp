@@ -238,7 +238,7 @@ namespace np
         return output_arrays;
     }
 
-    //! Cretes a new array and fills it with the values of the result of the function called on the input array element-wise
+    //! Creates a new array and fills it with the values of the result of the function called on the input array element-wise
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
     {
@@ -269,41 +269,52 @@ namespace np
 
     // Complex operations
 
+    //! Implements the numpy sqrt function on multi arrays
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::sqrt;
         return element_wise_apply(input_array, func);
     }
+
+    //! Implements the numpy sqrt function on scalars
     template <class T>
     inline T sqrt(const T input)
     {
         return std::sqrt(input);
     }
 
+    //! Implements the numpy exp function on multi arrays
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::exp;
         return element_wise_apply(input_array, func);
     }
+
+    //! Implements the numpy exp function on scalars
     template <class T>
     inline T exp(const T input)
     {
         return std::exp(input);
     }
 
+    //! Implements the numpy log function on multi arrays
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = std::log<T>();
         return element_wise_apply(input_array, func);
     }
+
+    //! Implements the numpy log function on scalars
     template <class T>
     inline T log(const T input)
     {
         return std::log(input);
     }
+
+    //! Implements the numpy pow function on multi arrays
     template <class T, long unsigned int ND>
     inline boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
     {
@@ -311,6 +322,8 @@ namespace np
         { return std::pow(input, exponent); };
         return element_wise_apply(input_array, pow_func);
     }
+
+    //! Implements the numpy pow function on scalars
     template <class T>
     inline T pow(const T input, const T exponent)
     {

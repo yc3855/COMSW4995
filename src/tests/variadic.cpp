@@ -231,20 +231,27 @@ void test_toy_problem()
 {
     boost::multi_array<double, 1> x = np::linspace(0, 1, 100);
     boost::multi_array<double, 1> y = np::linspace(0, 1, 100);
-    x = np::pow(x, 2.0);
-    y = np::pow(y, 3.0);
+    // x = np::pow(x, 2.0);
+    // y = np::pow(y, 3.0);
 
     const boost::multi_array<double, 1> axis[2] = {x, y};
-    std::vector<boost::multi_array<double, 2>> XY = np::meshgrid(axis, false, np::xy);
+    std::vector<boost::multi_array<double, 2>> XcY = np::meshgrid(axis, false, np::xy);
 
     double dx, dy;
     dx = 1.0 / 100.0;
     dy = 1.0 / 100.0;
-    std::vector<boost::multi_array<double, 2>> g = np::gradient(XY, {dx, dy});
 
+    boost::multi_array<double, 2> f = np::pow(XcY[0], 2.0) + XcY[0] * np::pow(XcY[1], 1.0);
+
+    // g.push_back(np::gradient(XcY[0], {dx, dy}));
+    // g.push_back(np::gradient(XcY[1], {dx, dy}));
+    std::vector<boost::multi_array<double, 2>> gradf = np::gradient(f, {dx, dy});
+    // auto [gradfx_x, gradfx_y] = np::gradient(f, {dx, dy});
+
+    int i, j;
     i = 10;
     j = 20;
-    std::cout << "df/dx at x = " << x[i] << " and y = " << y[j] << " is equal to" << g[0][i][j];
+    std::cout << "df/dx at x = " << x[i] << " and y = " << y[j] << " is equal to " << gradf[0][i][j];
 
     std::cout << "\n";
 }
@@ -258,4 +265,5 @@ int main()
     test_basic_operations();
     test_zeros();
     test_min_max();
+    test_toy_problem();
 }
