@@ -595,7 +595,9 @@ inline boost::multi_array<T, ND> operator/(T const &lhs, boost::multi_array<T, N
 template <class T, long unsigned int ND>
 inline boost::multi_array<T, ND> operator/(boost::multi_array<T, ND> const &lhs, T const &rhs)
 {
-    return rhs / lhs;
+    std::function<T(T)> func = [rhs](T item)
+    { return item / rhs; };
+    return np::element_wise_apply(lhs, func);
 }
 
 /*! @} End of Doxygen Groups*/
