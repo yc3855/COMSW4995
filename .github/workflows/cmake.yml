@@ -28,8 +28,9 @@ jobs:
 
     - name: Intall Matplot++
       working-directory: src/ExternalLibraries/matplotplusplus
-      run: ls
-      run: mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && sudo cmake --build . --config Release && sudo cmake --install .
+      run: |
+      ls
+      mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && sudo cmake --build . --config Release && sudo cmake --install .
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
