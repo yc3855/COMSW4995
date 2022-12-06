@@ -27,7 +27,7 @@ jobs:
       run: sudo apt-get install gnuplot
 
     - name: Intall Matplot++
-      run: mkdir ${{github.workspace}}/src/ExternalLibraries/matplotplusplus/build && cd ${{github.workspace}}/src/ExternalLibraries/matplotplusplus/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && sudo cmake --build . --config Release && sudo cmake --install .
+      run: ls ${{github.workspace}}/src/ExternalLibraries/matplotplusplus && mkdir ${{github.workspace}}/src/ExternalLibraries/matplotplusplus/build && cd ${{github.workspace}}/src/ExternalLibraries/matplotplusplus/build && cmake ${{github.workspace}}/src/ExternalLibraries/matplotplusplus -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && sudo cmake --build . --config Release && sudo cmake --install .
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
