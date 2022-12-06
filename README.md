@@ -82,6 +82,8 @@ Only one small subset of numpy functions were implemented, but the library is ea
 
 # Building
 
+Please be aware that since this library uses a few C++ 20 features it is only been tested on gcc-11 and above. It is possible that it will work on other compilers but it is not guaranteed.
+
 ## Install the boost library
 
 It is important to install the boost library before building the project. The boost library is used for data structures and algorithms. The boost library can be installed using the following command on ubuntu:
@@ -95,6 +97,41 @@ For Mac:
 ```bash
 brew install boost
 ```
+
+## Install Matplotplusplus
+
+This is the library used to generate graphics in the project. To be able to compile this project you must have it installed in your system. First install its dependencies:
+
+```bash
+sudo apt-get install gnuplot
+```
+
+or in Mac:
+
+```bash
+brew install gnuplot
+```
+
+Then install the library itself by cloning from source:
+
+```bash
+cd src/ExternalLibraries
+git clone https://github.com/alandefreitas/matplotplusplus
+cd matplotplusplu
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF
+sudo cmake --build . --parallel 2 --config Release
+sudo cmake --install .
+```
+
+If you are using clang on mac, make sure to force CMAKE to use gcc by adding the following flag to the first cmake command:
+
+```bash
+-DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+```
+
+(or equivalent paths depending on where your gcc is installed)
 
 ## Build the project
 

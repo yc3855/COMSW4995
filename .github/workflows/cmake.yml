@@ -25,12 +25,8 @@ jobs:
     
     - name: Install GnuPlot
       run: sudo apt-get install gnuplot
-
-    - name: ls matplotplusplus
-      working-directory: src/ExternalLibraries/matplotplusplus
-      run: ls
     
-    - name: Intall Matplot++
+    - name: Install Matplot++
       working-directory: src/ExternalLibraries
       run: git clone https://github.com/alandefreitas/matplotplusplus && cd matplotplusplus && mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O2" -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && sudo cmake --build . --config Release && sudo cmake --install .
 
