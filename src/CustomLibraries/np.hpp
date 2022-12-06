@@ -84,7 +84,8 @@ namespace np
     }
 
     //! Takes the gradient of a n-dimensional multi_array
-    //! Todo: Actually implement the gradient calculation
+    //! Uses ij indexing
+    //! Todo: Implement xy indexing
     template <typename T, long unsigned int ND>
     requires std::is_floating_point<T>::value inline constexpr std::vector<boost::multi_array<T, ND>> gradient(boost::multi_array<T, ND> inArray, std::initializer_list<T> args)
     {

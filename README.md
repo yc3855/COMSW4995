@@ -34,7 +34,9 @@ When waves travel in an inhomogeneous medium, they may be delayed, reflected, an
 u|_{t=0} = \frac{\partial u}{\partial t}\bigg|_{t = 0} = 0 & \qquad \text{in }\mathbb{R}^2.
 \end{align*}
 ```
+
 In our simulation, the numerical scheme we use is the finite difference method with the perfectly matched layers [1]:
+
 ```math
 \begin{equation}
 	\begin{aligned}
@@ -46,9 +48,11 @@ In our simulation, the numerical scheme we use is the finite difference method w
 	\end{aligned}
 \end{equation}
 ```
+
 ## References
-<a id="1">[1]</a> 
-Johnson, Steven G. (2021). 
+
+<a id="1">[1]</a>
+Johnson, Steven G. (2021).
 Notes on perfectly matched layers (PMLs).
 arXiv preprint arXiv:2108.05348.
 

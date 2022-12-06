@@ -2,6 +2,7 @@
 #include <string>
 #include "ExternalLibraries/cxxopts.hpp"
 #include "CustomLibraries/np.hpp"
+#include <matplot/matplot.h>
 
 // Command line arguments
 cxxopts::Options options("WaveSimC", "A wave propagation simulator written in C++ for seismic data processing.");
