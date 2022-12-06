@@ -15,17 +15,18 @@ boost::multi_array<double, 2> get_sigma_1(boost::multi_array<double, 1> x, doubl
     boost::multi_array<double, 2> sigma_1(boost::extents[nx][nz]);
     const double PML_width = n * dx;
 
-    const double sigma_max = - c_max * log(R) * (m+1) / np::pow(PML_width, (double) m+1);
+    const double sigma_max = - c_max * log(R) * (m+1.0) / np::pow(PML_width, m+1.0);
 
     const double x_0 = np::max(x) - PML_width;
+
     boost::multi_array<double, 1> polynomial(boost::extents[nx]);
 
     for (int i=0; i < nx; i++)
     {
         if (x[i] > x_0)
         {
-            polynomial[i] = np::pow(sigma_max * np::abs(x[i] - x_0), (double) m);
-            polynomial[nx-i] = polynomial[i];
+            polynomial[i] = sigma_max * np::pow(np::abs(x[i] - x_0), m);
+            polynomial[nx-1-i] = polynomial[i];
         }
         else
         {
@@ -47,10 +48,9 @@ boost::multi_array<double, 2> get_sigma_2(boost::multi_array<double, 1> z, doubl
 {
     boost::multi_array<double, 2> sigma_2(boost::extents[nx][nz]);
     const double PML_width = n * dz;
-    const double sigma_max = - c_max * log(R) * (m+1) / np::pow(PML_width, (double) m+1);
+    const double sigma_max = - c_max * log(R) * (m + 1.0) / np::pow(PML_width, m + 1.0);
 
     const double z_0 = np::max(z) - PML_width;
-    std::cout << z_0 ;
 
     boost::multi_array<double, 1> polynomial(boost::extents[nz]);
     for (int j=0; j<nz; j++)
@@ -58,8 +58,8 @@ boost::multi_array<double, 2> get_sigma_2(boost::multi_array<double, 1> z, doubl
         if (z[j] > z_0)
         {
             // TODO: Does math.h have an absolute value function?
-            polynomial[j] = np::pow(sigma_max * np::abs(z[j] - z_0), (double) m);
-            polynomial[nz-j] = polynomial[j];
+            polynomial[j] = sigma_max * np::pow(np::abs(z[j] - z_0), m);
+            polynomial[nz-1-j] = polynomial[j];
         }
         else
         {
