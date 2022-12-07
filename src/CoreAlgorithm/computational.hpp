@@ -23,9 +23,9 @@ boost::multi_array<double, 2> get_profile(double xmin, double xmax, double zmin,
         for (int j = 0; j < nz; j++)
         {
             if (np::pow(XZ[0][i][j]-x_0, 2.0) + np::pow(XZ[1][i][j]-z_0, 2.0) <= np::pow(r, 2.0))
-                c[i][j] = 3000;
+                c[i][j] = 3000.0;
             else
-                c[i][j] = 2500;
+                c[i][j] = 2500.0;
         }
     }
 

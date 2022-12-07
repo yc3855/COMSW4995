@@ -10,7 +10,7 @@
 
 
 boost::multi_array<double, 2> get_sigma_1(boost::multi_array<double, 1> x, double dx, int nx, int nz,
-                                          double c_max, int n=10, double R=1e-3, double m=2.0)
+                                          double c_max, int n=15, double R=1e-3, double m=2.0)
 {
     boost::multi_array<double, 2> sigma_1(boost::extents[nx][nz]);
     const double PML_width = n * dx;
