@@ -3,6 +3,7 @@
 #include "boost/multi_array.hpp"
 #include "boost/array.hpp"
 #include "CustomLibraries/np.hpp"
+#include "CustomLibraries/np_to_matplot.hpp"
 
 using namespace matplot;
 void test_simple_plot()
@@ -16,21 +17,6 @@ void test_simple_plot()
     contourf(X, Y, Z, 10);
 
     show();
-}
-
-matplot::vector_2d convert_to_matplot(const boost::multi_array<double, 2> &arr)
-{
-    std::vector<double> x = matplot::linspace(0, 0, arr.shape()[0]);
-    std::vector<double> y = matplot::linspace(00, 0, arr.shape()[1]);
-    matplot::vector_2d result = std::get<0>(matplot::meshgrid(x, y));
-    for (size_t i = 0; i < arr.shape()[0]; i++)
-    {
-        for (size_t j = 0; j < arr.shape()[1]; j++)
-        {
-            result[i][j] = arr[i][j];
-        }
-    }
-    return result;
 }
 
 void test_conversion()
@@ -52,7 +38,23 @@ void test_conversion()
     // g.push_back(np::gradient(XcY[0], {dx, dy}));
     // g.push_back(np::gradient(XcY[1], {dx, dy}));
     std::vector<boost::multi_array<double, 2>> gradf = np::gradient(f, {dx, dy});
-    contourf(convert_to_matplot(XcY[0]), convert_to_matplot(XcY[1]), convert_to_matplot(gradf[0]), 10);
+    matplot::vector_2d Xp = np::convert_to_matplot(XcY[0]);
+    matplot::vector_2d Yp = np::convert_to_matplot(XcY[1]);
+    matplot::vector_2d X = matplot::meshgrid(linspace(0, 1, 100), linspace(0, 1, 100)).first;
+    matplot::vector_2d Y = matplot::meshgrid(linspace(0, 1, 100), linspace(0, 1, 100)).second;
+
+    matplot::vector_2d Z = np::convert_to_matplot(gradf[1]);
+    std::cout << "X.size() = " << X.size() << std::endl;
+    std::cout << "Y.size() = " << Y.size() << std::endl;
+    std::cout << "Z.size() = " << Z.size() << std::endl;
+    for (size_t i = 0; i < X.size(); i++)
+    {
+        for (size_t j = 0; j < X[i].size(); j++)
+        {
+            std::cout << "X[" << i << "][" << j << "] = " << X[i][j] << " | XP[" << i << "][" << j << "] = " << Xp[i][j] << " | YP[" << i << "][" << j << "] = " << Yp[i][j] << std::endl;
+        }
+    }
+    contourf(Xp, Yp, Z, 10);
     show();
 }
 

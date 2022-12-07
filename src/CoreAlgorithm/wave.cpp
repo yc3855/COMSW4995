@@ -1,14 +1,7 @@
-// For the core algorithm, we need six functionalities:
-// 1) create the computational domain,
-// 2) create a velocity profile (1 & 2 can be put together)
-// 3) create attenuation coefficients,
-// 4) create source functions,
-// 5) helper functions to compute eg. df/dx
-// 6) use all above to create a solver function for wave equation
-
 // Standard IO libraries
 #include <iostream>
 #include <fstream>
+
 #include "CustomLibraries/np.hpp"
 
 #include <math.h>
@@ -18,7 +11,6 @@
 #include "coeff.hpp"
 #include "source.hpp"
 #include "helper_func.hpp"
-
 
 int main()
 {

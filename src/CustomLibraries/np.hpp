@@ -194,17 +194,12 @@ namespace np
             std::size_t source = i;
             if (indexing_type == xy && (ND == 3 || ND == 2))
             {
-                switch (i)
-                {
-                case 0:
+                if (i == 0)
                     source = 1;
-                    break;
-                case 1:
+                else if (i == 1)
                     source = 0;
-                    break;
-                default:
-                    break;
-                }
+                else
+                    source = i;
             }
             ci[i] = boost::multi_array<T, 1>();
             ci[i].resize(boost::extents[cinput[source].num_elements()]);
@@ -235,6 +230,10 @@ namespace np
                 ++p;
             }
             output_arrays.push_back(output_array);
+        }
+        if (indexing_type == xy && (ND == 3 || ND == 2))
+        {
+            std::swap(output_arrays[0], output_arrays[1]);
         }
         return output_arrays;
     }

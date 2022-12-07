@@ -40,7 +40,7 @@ target_link_libraries(VariadicTest Boost::program_options)
 target_include_directories(VariadicTest PRIVATE "${source_dir}")
 
 add_executable(CoreTests "${source_dir}/tests/CoreTests.cpp")
-target_link_libraries(CoreTests Boost::program_options)
+target_link_libraries(CoreTests Matplot++::matplot Boost::program_options)
 target_include_directories(CoreTests PRIVATE "${source_dir}")
 
 add_executable(MatPlotTest "${source_dir}/tests/MatPlotTest.cpp")
