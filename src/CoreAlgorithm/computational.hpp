@@ -12,6 +12,7 @@
 
 namespace waveSimCore
 {
+    //! Get the velocity profile of the model as a 2D Array
     boost::multi_array<double, 2> get_profile(double xmin, double xmax, double zmin, double zmax, int nx, int nz, double r)
     {
         boost::multi_array<double, 2> c(boost::extents[nx][nz]);

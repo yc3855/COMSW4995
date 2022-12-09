@@ -1,5 +1,30 @@
 # Tutorial
 
+## Using the executable
+
+If all you want is to run one simulation with custom parameters, you can use the executable that is generated when you build the project. The executable is located in the build folder.
+
+To build the executable you can use the following commands:
+
+```bash
+mkdir build
+cd build
+cmake ..
+make WaveSimCExec
+```
+
+And then run it with the following command:
+
+```bash
+./WaveSimCExec
+```
+
+The executable will ask you for the parameters of the simulation. A complete description of the parameters can be found in the the help menu of the executable. To see the help menu you can run the executable with the -h flag:
+
+```bash
+./WaveSimCExec -h
+```
+
 ## Creating a wave simulation and solving it
 
 The source code of this tutorial can be found in src/examples/wave_solver_with_animation.cpp

@@ -15,6 +15,9 @@
 
 namespace waveSimCore
 {
+    //! Returns the sigma 1 coefficient for the PML boundary conditions\n
+    //! sigma_1 and sigma_2 are the coefficients for the x and z directions respectively\n
+    //! Check Johnson, Steven G. (2021).
     boost::multi_array<double, 2> get_sigma_1(boost::multi_array<double, 1> x, double dx, int nx, int nz,
                                               double c_max, int n = 15, double R = 1e-3, double m = 2.0)
     {
@@ -39,7 +42,7 @@ namespace waveSimCore
                 polynomial[i] = 0;
             }
         }
-        // Copy 1D array into each column of 2D array
+
         for (int i = 0; i < nx; i++)
             for (int j = 0; j < nz; j++)
                 sigma_1[i][j] = polynomial[i];
@@ -47,6 +50,9 @@ namespace waveSimCore
         return sigma_1;
     }
 
+    //! Returns the sigma 2 coefficient for the PML boundary conditions\n
+    //! sigma_1 and sigma_2 are the coefficients for the x and z directions respectively\n
+    //! Check Johnson, Steven G. (2021).
     boost::multi_array<double, 2> get_sigma_2(boost::multi_array<double, 1> z, double dz, int nx, int nz,
                                               double c_max, int n = 10, double R = 1e-3, double m = 2.0)
     {
@@ -61,7 +67,6 @@ namespace waveSimCore
         {
             if (z[j] > z_0)
             {
-                // TODO: Does math.h have an absolute value function?
                 polynomial[j] = sigma_max * np::pow(np::abs(z[j] - z_0), m);
                 polynomial[nz - 1 - j] = polynomial[j];
             }
@@ -71,7 +76,6 @@ namespace waveSimCore
             }
         }
 
-        // Copy 1D array into each column of 2D array
         for (int i = 0; i < nx; i++)
             for (int j = 0; j < nz; j++)
                 sigma_2[i][j] = polynomial[j];

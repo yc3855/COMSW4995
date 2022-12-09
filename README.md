@@ -10,7 +10,7 @@ In addition, a custom implementation of numpy in modern C++ is also included as 
 That library aims to make c++ more pythonic and easier to use for scientific computing.
 Instead of numpy n-dimensional arrays the library use boost::multi_array and contains many utilities to expand the functionality of the library.
 
-## [Detailed documentation](https://wavesimc.vbpage.net/)
+**[Detailed documentation](https://wavesimc.vbpage.net/)**
 
 ## Authors
 
@@ -133,20 +133,28 @@ If you are using clang on mac, make sure to force CMAKE to use gcc by adding the
 
 (or equivalent paths depending on where your gcc is installed)
 
-## Build the project
+## Building the project
 
 ```bash
 mkdir build
 cd build
 cmake ..
-make Main
+make all
 ```
 
-## Running
+You can also build only the executable by running:
 
 ```bash
-./Main
+make WaveSimCExec
 ```
+
+## Running the executable
+
+```bash
+./WaveSimCExec
+```
+
+Use the help flag -h to see the available runtime options and the full list and description of the parameters.
 
 ## Building the documentation
 
@@ -162,5 +170,5 @@ Manually:
 doxygen dconfig
 cd documentation/latex
 pdflatex refman.tex
-cp refman.pdf ../WaveSimC-0.8-doc.pdf
+cp refman.pdf ../WaveSimC-1.0-doc.pdf
 ```

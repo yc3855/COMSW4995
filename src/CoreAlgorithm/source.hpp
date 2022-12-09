@@ -10,6 +10,7 @@
  */
 namespace waveSimCore
 {
+    //! Get the Ricker wavelet as a 3D Array
     boost::multi_array<double, 3> ricker(int i_s, int j_s, double f, double amp, double shift,
                                          double tmin, double tmax, int nt, int nx, int nz)
     {
@@ -31,19 +32,6 @@ namespace waveSimCore
         const boost::multi_array<double, 1> axis[3] = {r, x, z};
         std::vector<boost::multi_array<double, 3>> RXZ = np::meshgrid(axis, false, np::ij);
         boost::multi_array<double, 3> source = RXZ[0] * RXZ[1] * RXZ[2];
-
-        //    boost::multi_array<double, 3> source(boost::extents[nt][nx][nz]);
-        //    for (int i=0; i<nt; i++)
-        //    {
-        //        for (int j=0; i<nx; j++)
-        //        {
-        //            for (int k=0; k<nz; k++)
-        //            {
-        //                if (j==i_s && k==j_s)
-        //                    source[i][j][k] = r[i];
-        //            }
-        //        }
-        //    }
 
         return source;
     }

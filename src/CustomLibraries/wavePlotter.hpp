@@ -87,6 +87,12 @@ namespace wavePlotter
             }
         }
 
+        //! Set the save directory for the rendered frames
+        void setSaveDirectory(std::string save_directory)
+        {
+            this->save_directory = save_directory;
+        }
+
     private:
         std::string format_num(int num, int length = 8)
         {
