@@ -2,6 +2,8 @@
 
 # COMSW4995 Final Project: WaveSimPP
 
+**[Click Here to Access the Github Repo](https://github.com/yc3855/COMSW4995)**
+
 This is the repository for our final project for the discpline COMSW4995: Design in C++ at Columbia University during the Fall of 2022.
 
 This project aims to implement in modern C++ a wave equation solver for geophysical application.
