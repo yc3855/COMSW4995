@@ -33,7 +33,7 @@ The first part of creating the wave simulation is to define the constants for th
 
 It is important to pay attention to the fact that the plane is XZ not XY due to geophysical conventions.
 
-```c++
+```cpp
 // Define the constants for the simulation
 
 // Number of x and z grid points
@@ -67,7 +67,7 @@ int source_js = 50;
 
 The next step is to create the source object and the velocity profile
 
-```c++
+```cpp
 // Create the source
 boost::multi_array<double, 3> f = waveSimCore::ricker(source_is, source_js, f_M, amp, shift, tmin, tmax, nt, nx, nz);
 
@@ -78,7 +78,7 @@ boost::multi_array<double, 2> vel = waveSimCore::get_profile(xmin, xmax, zmin, z
 
 Then we can proceed to solve the wave equation using the wave solver.
 
-```c++
+```cpp
 // Solve the wave equation
 boost::multi_array<double, 3> u = waveSimCore::wave_solver(vel, dt, dx, dz, nt, nx, nz, f);
 ```
@@ -87,7 +87,7 @@ u is the multi_array that contains the result of the simulation. It has the shap
 
 You can access the result of a specific time step by simply using:
 
-```c++
+```cpp
 boost::multi_array<double, 2> u_at_time_20 = u[20];
 ```
 
@@ -104,7 +104,7 @@ You should do some light processing to conver the domain from a boost::multi_arr
 
 After that you can convert the result of each frame to a matplot::vector_2d and plot it using the wavePlotter::Plotter class.
 
-```c++
+```cpp
 // Define the number of different levels for the contour plot
 int num_levels = 100;
 // Create the levels for the contour plot based on the min and max values of u
@@ -124,7 +124,7 @@ matplot::vector_2d Zp = np::convert_to_matplot(XcZ[1]);
 
 From this point on you can plot it as you wish, for example, if you want a filled contour plot you can do:
 
-```c++
+```cpp
 matplot::vector_2d Up = np::convert_to_matplot(this->u[frame_index]);
 matplot::contourf(this->Xp, this->Zp, Up, this->levels);
 matplot::show();
@@ -132,7 +132,7 @@ matplot::show();
 
 Another option is to pass the data to the wavePlotter:Plotter class and use the plot function to render all frames
 
-```c++
+```cpp
 // Create the plotter object and animate the results
 wavePlotter::Plotter my_plotter(u, Xp, Zp, num_levels, nt);
 
@@ -152,7 +152,7 @@ The animation will be saved in . and the frames will be saved to ./output
 
 You can export the results to a series of individual csv files using the wavePlotter::Plotter class.
 
-```c++
+```cpp
 // Create the plotter object and animate the results
 wavePlotter::Plotter my_plotter(u, Xp, Zp, num_levels, nt);
 
