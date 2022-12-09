@@ -1,6 +1,6 @@
-![WaveSimC](WaveSimCLogo.png)
+![WaveSimPP](WaveSimPPLogo.png)
 
-# COMSW4995 Final Project: WaveSimC
+# COMSW4995 Final Project: WaveSimPP
 
 This is the repository for our final project for the discpline COMSW4995: Design in C++ at Columbia University during the Fall of 2022.
 
@@ -10,7 +10,7 @@ In addition, a custom implementation of numpy in modern C++ is also included as 
 That library aims to make c++ more pythonic and easier to use for scientific computing.
 Instead of numpy n-dimensional arrays the library use boost::multi_array and contains many utilities to expand the functionality of the library.
 
-**[Detailed documentation](https://wavesimc.vbpage.net/)**
+**[Detailed documentation](https://waveSimPP.vbpage.net/)**
 
 ## Authors
 
@@ -145,13 +145,13 @@ make all
 You can also build only the executable by running:
 
 ```bash
-make WaveSimCExec
+make WaveSimPPExec
 ```
 
 ## Running the executable
 
 ```bash
-./WaveSimCExec
+./WaveSimPPExec
 ```
 
 Use the help flag -h to see the available runtime options and the full list and description of the parameters.
@@ -170,5 +170,5 @@ Manually:
 doxygen dconfig
 cd documentation/latex
 pdflatex refman.tex
-cp refman.pdf ../WaveSimC-1.0-doc.pdf
+cp refman.pdf ../WaveSimPP-1.0-doc.pdf
 ```

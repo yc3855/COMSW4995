@@ -18,7 +18,7 @@
 #include "CoreAlgorithm/solver.hpp"
 
 // Command line arguments
-cxxopts::Options options("WaveSimC", "A wave propagation simulator written in C++.");
+cxxopts::Options options("WaveSimPP", "A wave propagation simulator written in C++.");
 int main(int argc, char *argv[])
 {
     // Parse command line arguments
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
     }
     catch (const cxxopts::exceptions::exception &e)
     {
-        std::cerr << "WaveSimC: " << e.what() << '\n';
-        std::cerr << "usage: WaveSimC [options] ...\n";
+        std::cerr << "WaveSimPP: " << e.what() << '\n';
+        std::cerr << "usage: WaveSimPP [options] ...\n";
         return EXIT_FAILURE;
     }
     if (result.count("help"))

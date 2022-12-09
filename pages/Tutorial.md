@@ -10,19 +10,19 @@ To build the executable you can use the following commands:
 mkdir build
 cd build
 cmake ..
-make WaveSimCExec
+make WaveSimPPExec
 ```
 
 And then run it with the following command:
 
 ```bash
-./WaveSimCExec
+./WaveSimPPExec
 ```
 
 The executable will ask you for the parameters of the simulation. A complete description of the parameters can be found in the the help menu of the executable. To see the help menu you can run the executable with the -h flag:
 
 ```bash
-./WaveSimCExec -h
+./WaveSimPPExec -h
 ```
 
 ## Creating a wave simulation and solving it
@@ -69,18 +69,18 @@ The next step is to create the source object and the velocity profile
 
 ```cpp
 // Create the source
-boost::multi_array<double, 3> f = waveSimCore::ricker(source_is, source_js, f_M, amp, shift, tmin, tmax, nt, nx, nz);
+boost::multi_array<double, 3> f = waveSimPPore::ricker(source_is, source_js, f_M, amp, shift, tmin, tmax, nt, nx, nz);
 
 // Create the velocity profile
 double r = 150.0;
-boost::multi_array<double, 2> vel = waveSimCore::get_profile(xmin, xmax, zmin, zmax, nx, nz, r);
+boost::multi_array<double, 2> vel = waveSimPPore::get_profile(xmin, xmax, zmin, zmax, nx, nz, r);
 ```
 
 Then we can proceed to solve the wave equation using the wave solver.
 
 ```cpp
 // Solve the wave equation
-boost::multi_array<double, 3> u = waveSimCore::wave_solver(vel, dt, dx, dz, nt, nx, nz, f);
+boost::multi_array<double, 3> u = waveSimPPore::wave_solver(vel, dt, dx, dz, nt, nx, nz, f);
 ```
 
 u is the multi_array that contains the result of the simulation. It has the shape (nt, nx, nz). That means that the first index is the time step, the second index is the x grid point, and the third index is the z grid point.

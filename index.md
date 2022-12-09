@@ -1,8 +1,8 @@
 # Main Page {#mainpage}
 
-![WaveSimC](WaveSimCLogo.png)
+![WaveSimPP](WaveSimPPLogo.png)
 
-# COMSW4995 Final Project: WaveSimC
+# COMSW4995 Final Project: WaveSimPP
 
 This is the repository for our final project for the discpline COMSW4995: Design in C++ at Columbia University during the Fall of 2022.
 
