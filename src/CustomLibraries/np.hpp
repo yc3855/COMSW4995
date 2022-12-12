@@ -87,16 +87,15 @@ namespace np
     //! Uses ij indexing
     //! Todo: Implement xy indexing
     template <typename T, long unsigned int ND>
-    requires std::is_floating_point<T>::value inline constexpr std::vector<boost::multi_array<T, ND>> gradient(boost::multi_array<T, ND> inArray, std::initializer_list<T> args)
+        requires std::is_floating_point<T>::value
+    inline constexpr std::vector<boost::multi_array<T, ND>> gradient(boost::multi_array<T, ND> inArray, std::initializer_list<T> args)
     {
-        // static_assert(args.size() == ND, "Number of arguments must match the number of dimensions of the array");
         using arrayIndex = boost::multi_array<T, ND>::index;
 
         using ndIndexArray = boost::array<arrayIndex, ND>;
 
-        // constexpr std::size_t n = sizeof...(Args);
         std::size_t n = args.size();
-        // std::tuple<Args...> store(args...);
+
         std::vector<T> arg_vector = args;
         boost::multi_array<T, ND> my_array;
         std::vector<boost::multi_array<T, ND>> output_arrays;
@@ -111,14 +110,6 @@ namespace np
         for (std::size_t i = 0; i < inArray.num_elements(); i++)
         {
             index = getIndexArray(inArray, p);
-            /*
-            std::cout << "Index: ";
-            for (std::size_t j = 0; j < n; j++)
-            {
-                std::cout << index[j] << " ";
-            }
-            std::cout << "\n";
-            */
             // Calculating the gradient now
             // j is the axis/dimension
             for (std::size_t j = 0; j < n; j++)
@@ -148,10 +139,8 @@ namespace np
 
                 T dh = dh_high + dh_low;
                 T gradient = (inArray(index_high) - inArray(index_low)) / dh;
-                // std::cout << gradient << "\n";
                 output_arrays[j](index) = gradient;
             }
-            // std::cout << " value = " << inArray(index) << "  check = " << *p << std::endl;
             ++p;
         }
         return output_arrays;
@@ -181,7 +170,8 @@ namespace np
     //! if the number of dimensions is 2 or 3
     //! In accordance with the numpy implementation
     template <typename T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr std::vector<boost::multi_array<T, ND>> meshgrid(const boost::multi_array<T, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
+        requires std::is_arithmetic<T>::value
+    inline constexpr std::vector<boost::multi_array<T, ND>> meshgrid(const boost::multi_array<T, 1> (&cinput)[ND], bool sparsing = false, indexing indexing_type = xy)
     {
         using arrayIndex = boost::multi_array<T, ND>::index;
         using oneDArrayIndex = boost::multi_array<T, 1>::index;
@@ -240,7 +230,8 @@ namespace np
 
     //! Creates a new array and fills it with the values of the result of the function called on the input array element-wise
     template <class T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> element_wise_apply(const boost::multi_array<T, ND> &input_array, std::function<T(T)> func)
     {
 
         // Create output array copying extents
@@ -271,7 +262,8 @@ namespace np
 
     //! Implements the numpy sqrt function on multi arrays
     template <class T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> sqrt(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::sqrt;
         return element_wise_apply(input_array, func);
@@ -279,14 +271,16 @@ namespace np
 
     //! Implements the numpy sqrt function on scalars
     template <class T>
-    requires std::is_arithmetic<T>::value inline constexpr T sqrt(const T input)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T sqrt(const T input)
     {
         return std::sqrt(input);
     }
 
     //! Implements the numpy exp function on multi arrays
     template <class T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> exp(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = (T(*)(T))std::exp;
         return element_wise_apply(input_array, func);
@@ -294,14 +288,16 @@ namespace np
 
     //! Implements the numpy exp function on scalars
     template <class T>
-    requires std::is_arithmetic<T>::value inline constexpr T exp(const T input)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T exp(const T input)
     {
         return std::exp(input);
     }
 
     //! Implements the numpy log function on multi arrays
     template <class T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> log(const boost::multi_array<T, ND> &input_array)
     {
         std::function<T(T)> func = std::log<T>();
         return element_wise_apply(input_array, func);
@@ -309,14 +305,16 @@ namespace np
 
     //! Implements the numpy log function on scalars
     template <class T>
-    requires std::is_arithmetic<T>::value inline constexpr T log(const T input)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T log(const T input)
     {
         return std::log(input);
     }
 
     //! Implements the numpy pow function on multi arrays
     template <class T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> pow(const boost::multi_array<T, ND> &input_array, const T exponent)
     {
         std::function<T(T)> pow_func = [exponent](T input)
         { return std::pow(input, exponent); };
@@ -325,7 +323,8 @@ namespace np
 
     //! Implements the numpy pow function on scalars
     template <class T>
-    requires std::is_arithmetic<T>::value inline constexpr T pow(const T input, const T exponent)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T pow(const T input, const T exponent)
     {
         return std::pow(input, exponent);
     }
@@ -362,7 +361,8 @@ namespace np
 
     //! Implements the numpy zeros function for an n-dimensionl multi array
     template <typename T, typename inT, long unsigned int ND>
-    requires std::is_integral<inT>::value && std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND])
+        requires std::is_integral<inT>::value && std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> zeros(inT (&dimensions_input)[ND])
     {
         // Deducing the extents of the N-Dimensional output
         boost::detail::multi_array::extent_gen<ND> output_extents;
@@ -381,7 +381,8 @@ namespace np
 
     //! Implements the numpy max function for an n-dimensionl multi array
     template <typename T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr T max(boost::multi_array<T, ND> const &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T max(boost::multi_array<T, ND> const &input_array)
     {
         T max = 0;
         bool max_not_set = true;
@@ -401,7 +402,8 @@ namespace np
 
     //! Implements the numpy max function for an variadic number of arguments
     template <class T, class... Ts, class = std::enable_if_t<(std::is_same_v<T, Ts> && ...)>>
-    requires std::is_arithmetic<T>::value inline constexpr T max(T input1, Ts... inputs)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T max(T input1, Ts... inputs)
     {
         T max = input1;
         for (T input : {inputs...})
@@ -416,7 +418,8 @@ namespace np
 
     //! Implements the numpy min function for an n-dimensionl multi array
     template <typename T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr T min(boost::multi_array<T, ND> const &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T min(boost::multi_array<T, ND> const &input_array)
     {
         T min = 0;
         bool min_not_set = true;
@@ -436,7 +439,8 @@ namespace np
 
     //! Implements the numpy min function for an variadic number of arguments
     template <class T, class... Ts, class = std::enable_if_t<(std::is_same_v<T, Ts> && ...)>>
-    inline constexpr T min(T input1, Ts... inputs) requires std::is_arithmetic<T>::value
+    inline constexpr T min(T input1, Ts... inputs)
+        requires std::is_arithmetic<T>::value
     {
         T min = input1;
         for (T input : {inputs...})
@@ -451,7 +455,8 @@ namespace np
 
     //! Implements the numpy abs function for an n-dimensionl multi array
     template <typename T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND> abs(boost::multi_array<T, ND> const &input_array)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND> abs(boost::multi_array<T, ND> const &input_array)
     {
         std::function<T(T)> abs_func = [](T input)
         { return std::abs(input); };
@@ -460,14 +465,16 @@ namespace np
 
     //! Implements the numpy abs function for a scalar
     template <typename T>
-    requires std::is_arithmetic<T>::value inline constexpr T abs(T input)
+        requires std::is_arithmetic<T>::value
+    inline constexpr T abs(T input)
     {
         return std::abs(input);
     }
 
     //! Slices the array through one dimension and returns a ND - 1 dimensional array
     template <typename T, long unsigned int ND>
-    requires std::is_arithmetic<T>::value inline constexpr boost::multi_array<T, ND - 1> slice(boost::multi_array<T, ND> const &input_array, std::size_t slice_index)
+        requires std::is_arithmetic<T>::value
+    inline constexpr boost::multi_array<T, ND - 1> slice(boost::multi_array<T, ND> const &input_array, std::size_t slice_index)
     {
 
         // Deducing the extents of the N-Dimensional output
